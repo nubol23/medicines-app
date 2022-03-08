@@ -1,0 +1,19 @@
+[tool.black]
+extend-exclude = '''
+migrations
+'''
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = [
+    "tests.py",
+    "test_*.py",
+    "*_tests.py",
+]
+filterwarnings = [
+    "error",
+    "ignore:The USE_L10N setting is deprecated:",
+]
