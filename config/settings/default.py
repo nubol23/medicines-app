@@ -12,9 +12,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
-os.environ["DJANGO_DEBUG"] = "True"
-CORS_ORIGIN_ALLOW_ALL = True
-
 
 def env_list(var, default=None):
     value = os.getenv(var, None)
@@ -34,7 +31,7 @@ SECRET_KEY = "django-insecure-3mjoan#q&ube7m@&m&y^s_--@6l8do_=0ar57)x8b6dym_was(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "users.User"
 
