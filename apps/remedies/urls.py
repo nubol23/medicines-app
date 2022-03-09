@@ -1,6 +1,6 @@
 from django.urls import path
 
-from remedies.views import ListAllMedicinesViewSet
+from apps.remedies.views import ListAllMedicinesViewSet
 
 app_name = "remedies"
 

@@ -2,7 +2,7 @@ from datetime import timezone
 
 import factory.django
 
-from users.models import User
+from apps.users.models import User
 from utils.tests.faker import faker
 
 

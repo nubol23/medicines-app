@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from users.views import CustomTokenObtainPairView
+from apps.users.views import CustomTokenObtainPairView
 
 app_name = "users"
 

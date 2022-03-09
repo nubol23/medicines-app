@@ -1,6 +1,6 @@
 import factory.django
 
-from remedies.models import Medicine
+from apps.remedies.models import Medicine
 from utils.tests.faker import faker
 
 

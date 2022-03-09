@@ -1,9 +1,9 @@
 from django.urls import reverse
 from rest_framework import status
 
-from remedies.tests.factories import MedicineFactory
-from remedies.tests.validators import ValidateMedicine
-from users.tests.factories import UserFactory
+from apps.remedies.tests.factories import MedicineFactory
+from apps.remedies.tests.validators import ValidateMedicine
+from apps.users.tests.factories import UserFactory
 from utils.tests.testcase import CustomTestCase
 from utils.tests.validation import ValidateMultiple
 

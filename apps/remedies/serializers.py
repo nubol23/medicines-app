@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from remedies.models import Medicine
+from apps.remedies.models import Medicine
 
 
 class MedicineListSerializer(ModelSerializer):
