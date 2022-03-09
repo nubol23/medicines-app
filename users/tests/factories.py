@@ -1,22 +1,22 @@
 from datetime import timezone
 
 import factory.django
-from faker import Faker
 
 from users.models import User
-
-faker = Faker()
+from utils.tests.faker import faker
 
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    email = factory.Sequence(lambda n: f"someone_{n}@mail.com")
+    email = factory.LazyAttribute(lambda _: faker.unique.email())
     password = factory.PostGenerationMethodCall("set_password", "password")
-    first_name = factory.Sequence(lambda n: f"Firstname {n}")
-    last_name = factory.Sequence(lambda n: f"Lastname {n}")
-    phone_number = factory.Faker("bothify", text="#"*11)
+    first_name = factory.LazyAttribute(lambda _: faker.name().split()[0])
+    last_name = factory.LazyAttribute(lambda _: faker.name().split()[1:])
+    phone_number = factory.LazyAttribute(lambda _: "591" + faker.numerify("#" * 8))
 
     is_active = True
-    last_login = factory.Faker("date_time_this_month", tzinfo=timezone.utc)
+    last_login = factory.LazyAttribute(
+        lambda _: faker.date_time_this_month(tzinfo=timezone.utc)
+    )
