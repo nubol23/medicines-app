@@ -8,3 +8,6 @@ class Medicine(BaseModel):
     maker = models.CharField(max_length=255)
     quantity = models.FloatField()
     unit = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f"{self.name} by {self.maker}"
