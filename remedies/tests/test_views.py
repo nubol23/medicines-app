@@ -26,8 +26,5 @@ class ListAllMedicinesViewSetTests(CustomTestCase):
 
         self.medicines.reverse()
         ValidateMultiple.validate(
-            self,
-            ValidateMedicine.validate,
-            self.medicines,
-            response.json()
+            self, ValidateMedicine.validate, self.medicines, response.json()
         )
