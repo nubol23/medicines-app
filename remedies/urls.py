@@ -6,5 +6,9 @@ app_name = "remedies"
 
 
 urlpatterns = [
-    path("medicines-all/", ListAllMedicinesViewSet.as_view(), name="medicines-all")
+    path(
+        "medicines-all/",
+        ListAllMedicinesViewSet.as_view({"get": "list"}),
+        name="medicines-all",
+    )
 ]
