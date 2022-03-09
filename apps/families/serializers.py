@@ -12,9 +12,4 @@ class FamilyMemberSerializer(ModelSerializer):
 
     class Meta:
         model = Membership
-        fields = (
-            "first_name",
-            "last_name",
-            "phone_number",
-            "email"
-        )
+        fields = ("first_name", "last_name", "phone_number", "email")
