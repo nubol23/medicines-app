@@ -8,7 +8,7 @@ from utils.tests.testcase import CustomTestCase
 from utils.tests.validation import ValidateMultiple
 
 
-class ListAllMedicinesViewSetTests(CustomTestCase):
+class ListFamilyMembersViewSetTests(CustomTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -27,6 +27,24 @@ class ListAllMedicinesViewSetTests(CustomTestCase):
     def setUp(self):
         super().setUp()
         self.backend.login(self.user)
+
+    def test_access_permission(self):
+        self.backend.get(self.url, status=status.HTTP_200_OK)
+
+        self.backend.logout()
+        self.backend.get(self.url, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Member of no family
+        non_member_user = UserFactory()
+        self.backend.login(non_member_user)
+        self.backend.get(self.url, status=status.HTTP_403_FORBIDDEN)
+        self.backend.logout()
+
+        # Member of other family
+        MembershipFactory(user=non_member_user)
+        self.backend.login(non_member_user)
+        self.backend.get(self.url, status=status.HTTP_403_FORBIDDEN)
+        self.backend.logout()
 
     def test_list_family_members(self):
         response = self.backend.get(self.url, status=status.HTTP_200_OK)
