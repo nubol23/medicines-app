@@ -1,7 +1,7 @@
 from utils.tests.validation import BaseValidator
 
 
-class ValidateMedicine(BaseValidator):
+class ValidateUser(BaseValidator):
     @staticmethod
     def _perform_validation(testcase, user_obj, user_dict):
         testcase.assertEqual(user_obj.first_name, user_dict.pop("first_name"))
