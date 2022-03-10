@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from apps.families.models import Membership
+from apps.families.models import Family, Membership
+from apps.users.serializers import UserSerializer
 
 
 class FamilyMemberSerializer(ModelSerializer):
@@ -13,3 +14,11 @@ class FamilyMemberSerializer(ModelSerializer):
     class Meta:
         model = Membership
         fields = ("first_name", "last_name", "phone_number", "email")
+
+
+class FamilySerializer(ModelSerializer):
+    members = UserSerializer(many=True)
+
+    class Meta:
+        model = Family
+        fields = ("family_name", "members")
