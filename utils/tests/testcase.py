@@ -19,6 +19,24 @@ class CustomAPIClient(APIClient):
         self.credentials(HTTP_AUTHORIZATION="Bearer " + auth_token["access"])
         return auth_token
 
+    # Modify the base request to check for status
+    def assert_status(self, response, extra):
+        status = extra.pop("status", None)
+        if status:
+            assert (
+                response.status_code == status
+            ), f"returned {response.status_code} instead"
+
+    def get(self, path, data=None, follow=False, **extra):
+        response = super().get(path, data, follow, **extra)
+        self.assert_status(response, extra)
+        return response
+
+    def post(self, path, data=None, format="json", content_type=None, **extra):
+        response = super().post(path, data, format, content_type, **extra)
+        self.assert_status(response, extra)
+        return response
+
 
 class CustomTestCase(TestCase):
     @cached_property

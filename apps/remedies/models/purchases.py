@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 from apps.families.models import Family
@@ -7,6 +9,7 @@ from utils.models import BaseModel
 
 
 class Purchase(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     medicine = models.ForeignKey(
         Medicine,
         related_name="purchases",

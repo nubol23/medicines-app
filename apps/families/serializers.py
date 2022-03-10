@@ -22,3 +22,9 @@ class FamilySerializer(ModelSerializer):
     class Meta:
         model = Family
         fields = ("family_name", "members")
+
+
+class ShortFamilySerializer(ModelSerializer):
+    class Meta:
+        model = Family
+        fields = ("family_name",)

@@ -28,6 +28,18 @@ class BaseValidator(ABC):
         testcase.assertFalse(dict_entry)
 
 
+class ValidateDateTime:
+    @classmethod
+    def validate(cls, testcase, instance_datetime, response_datetime):
+        if response_datetime:
+            testcase.assertEqual(
+                response_datetime,
+                instance_datetime.isoformat().replace("+00:00", "Z")
+                if instance_datetime
+                else None,
+            )
+
+
 def jsonify(content):
     return json.dumps(content, indent=4)
 
