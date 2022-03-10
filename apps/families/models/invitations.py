@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.postgres.fields import CIEmailField
 from django.db import models
 
@@ -15,7 +17,14 @@ class InvitationStatus(models.TextChoices):
 class FamilyInvitation(BaseModel):
     Status = InvitationStatus
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    # Invited user data
     email = CIEmailField(max_length=255)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    phone_number = models.CharField(max_length=20)
+
     family = models.ForeignKey(
         Family, related_name="invitations", on_delete=models.PROTECT
     )
