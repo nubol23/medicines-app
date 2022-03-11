@@ -63,7 +63,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "apps", "families", "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -147,3 +147,16 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True
+EMAIL_REDIRECT_TO_URL = os.getenv("EMAIL_REDIRECT_TO_URL")
+
+PERSONAL_TEST_EMAIL = os.getenv("PERSONAL_TEST_EMAIL")
+PERSONAL_TEST_FIRST_NAME = os.getenv("PERSONAL_TEST_FIRST_NAME")
+PERSONAL_TEST_LAST_NAME = os.getenv("PERSONAL_TEST_LAST_NAME")
+PERSONAL_TEST_PHONE = os.getenv("PERSONAL_TEST_PHONE")
