@@ -3,7 +3,11 @@ from rest_framework import status
 
 from apps.families.models import FamilyInvitation, InvitationStatus
 from apps.families.serializers import ShortFamilySerializer
-from apps.families.tests.factories import FamilyFactory, MembershipFactory
+from apps.families.tests.factories import (
+    FamilyFactory,
+    FamilyInvitationFactory,
+    MembershipFactory,
+)
 from apps.families.tests.validators.invitation_validators import (
     ValidateFamilyInvitationCreation,
 )
@@ -35,6 +39,19 @@ class FamilyInvitationViewSetTests(CustomTestCase):
     def setUp(self):
         super().setUp()
         self.backend.login(self.user)
+
+    def test_create_user_has_pending_invitation_fail(self):
+        # Create an already invited user with pending invitation
+        UserFactory(**self.data)
+        FamilyInvitationFactory(**self.data, family=self.family)
+
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_422_UNPROCESSABLE_ENTITY
+        )
+
+        self.assertEqual(
+            response.json(), ["User already has a pending invitation to this family"]
+        )
 
     def test_create_invitation_for_new_user_success(self):
         # Assert user doesn't exist

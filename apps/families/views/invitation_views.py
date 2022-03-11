@@ -51,7 +51,9 @@ class FamilyInvitationViewSet(CustomModelViewSet):
         if invitee:
             # If invitee user already exists, add to the family
             invitee.families.add(self.get_family())
-            return Response("added existing user to family", status=status.HTTP_200_OK)
+            return Response(
+                ["added existing user to family"], status=status.HTTP_200_OK
+            )
         else:
             # If user doesn't exists, create it, create the invitation and send it
             with transaction.atomic():
@@ -71,4 +73,4 @@ class FamilyInvitationViewSet(CustomModelViewSet):
             # TODO: Send email invitation with a signal
             print("SEND EMAIL")
 
-            return Response("Created the invitation", status=status.HTTP_201_CREATED)
+            return Response(["Created the invitation"], status=status.HTTP_201_CREATED)
