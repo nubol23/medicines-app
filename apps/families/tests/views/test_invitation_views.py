@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.urls import reverse
 from rest_framework import status
 
@@ -40,7 +42,8 @@ class FamilyInvitationViewSetTests(CustomTestCase):
         super().setUp()
         self.backend.login(self.user)
 
-    def test_create_user_has_pending_invitation_fail(self):
+    @patch("utils.functions.send_mail")
+    def test_create_user_has_pending_invitation_fail(self, mock_send_email):
         # Create an already invited user with pending invitation
         UserFactory(**self.data)
         FamilyInvitationFactory(**self.data, family=self.family)
@@ -52,8 +55,10 @@ class FamilyInvitationViewSetTests(CustomTestCase):
         self.assertEqual(
             response.json(), ["User already has a pending invitation to this family"]
         )
+        mock_send_email.assert_not_called()
 
-    def test_create_user_already_family_member_fail(self):
+    @patch("utils.functions.send_mail")
+    def test_create_user_already_family_member_fail(self, mock_send_email):
         # Create an already family member user
         invitee = UserFactory(**self.data)
         MembershipFactory(user=invitee, family=self.family)
@@ -63,8 +68,10 @@ class FamilyInvitationViewSetTests(CustomTestCase):
         )
 
         self.assertEqual(response.json(), ["User is already a member of this family"])
+        mock_send_email.assert_not_called()
 
-    def test_add_existing_user_as_member_success(self):
+    @patch("utils.functions.send_mail")
+    def test_add_existing_user_as_member_success(self, mock_send_email):
         # Create non member user
         invitee = UserFactory(**self.data)
 
@@ -78,8 +85,10 @@ class FamilyInvitationViewSetTests(CustomTestCase):
 
         # Assert is family member
         self.assertTrue(invitee.families.filter(id=self.family.id).exists())
+        mock_send_email.assert_not_called()
 
-    def test_create_invitation_for_new_user_success(self):
+    @patch("utils.functions.send_mail")
+    def test_create_invitation_for_new_user_success(self, mock_send_email):
         # Assert user doesn't exist
         self.assertFalse(User.objects.filter(email=self.data["email"]).exists())
 
@@ -98,6 +107,8 @@ class FamilyInvitationViewSetTests(CustomTestCase):
 
         # Assert is a member of the family
         self.assertTrue(self.family.members.filter(email=self.data["email"]).exists())
+
+        mock_send_email.assert_called_once()
 
     # from django.test import override_settings
     #
