@@ -9,6 +9,7 @@ from apps.families.permissions import UserIsFamilyMemberPermission
 from apps.families.serializers import FamilyInvitationCreateSerializer
 from apps.users.models import User
 from utils.errors import UnprocessableEntityError
+from utils.functions import generate_random_password
 from utils.views import CustomModelViewSet
 
 
@@ -54,13 +55,13 @@ class FamilyInvitationViewSet(CustomModelViewSet):
         else:
             # If user doesn't exists, create it, create the invitation and send it
             with transaction.atomic():
-                # TODO: generate random password
+                random_password = generate_random_password()
                 new_user = User.objects.create_user(
                     email=self.request.data["email"],
                     first_name=self.request.data["first_name"],
                     last_name=self.request.data["last_name"],
                     phone_number=self.request.data["phone_number"],
-                    password="12345",
+                    password=random_password,
                 )
                 self.request.data["family"] = self.kwargs["family_id"]
                 super().create(request, *args, **kwargs)
