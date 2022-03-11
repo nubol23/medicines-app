@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from apps.families.models import Family, FamilyInvitation, InvitationStatus, Membership
 from apps.families.permissions import UserIsFamilyMemberPermission
+from apps.families.serializers import FamilyInvitationCreateSerializer
 from apps.users.models import User
 from utils.errors import UnprocessableEntityError
 from utils.views import CustomModelViewSet
@@ -13,7 +14,7 @@ from utils.views import CustomModelViewSet
 
 class FamilyInvitationViewSet(CustomModelViewSet):
     queryset = FamilyInvitation.objects.all()
-    serializer_class = None
+    serializer_class = FamilyInvitationCreateSerializer
     permission_classes = [IsAuthenticated, UserIsFamilyMemberPermission]
 
     def get_family(self):
