@@ -98,3 +98,17 @@ class FamilyInvitationViewSetTests(CustomTestCase):
 
         # Assert is a member of the family
         self.assertTrue(self.family.members.filter(email=self.data["email"]).exists())
+
+    # from django.test import override_settings
+    #
+    # @override_settings(EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend")
+    # def test_invitarme(self):
+    #     import config.settings.default as settings
+    #
+    #     data = {
+    #         "email": settings.PERSONAL_TEST_EMAIL,
+    #         "first_name": settings.PERSONAL_TEST_FIRST_NAME,
+    #         "last_name": settings.PERSONAL_TEST_LAST_NAME,
+    #         "phone_number": settings.PERSONAL_TEST_PHONE,
+    #     }
+    #     self.backend.post(self.url, data=data, status=status.HTTP_201_CREATED)
