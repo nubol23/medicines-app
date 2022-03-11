@@ -63,7 +63,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "apps", "families", "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -154,3 +154,4 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
+EMAIL_REDIRECT_TO_URL = os.getenv("EMAIL_REDIRECT_TO_URL")

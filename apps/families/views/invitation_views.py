@@ -62,7 +62,8 @@ class FamilyInvitationViewSet(CustomModelViewSet):
                 self.request.data["family"] = self.kwargs["family_id"]
                 super().create(request, *args, **kwargs)
                 # Add user as member of the family
-                new_user.families.add(self.get_family())
+                family_instance = self.get_family()
+                new_user.families.add(family_instance)
 
             # TODO: Send email invitation with a signal
             print("SEND EMAIL")
