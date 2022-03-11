@@ -22,12 +22,6 @@ class FamilyInvitationViewSet(CustomModelViewSet):
         return get_object_or_404(Family, id=self.kwargs.get("family_id"))
 
     def create(self, request, *args, **kwargs):
-        # TODO: check the following using the email field
-        # * check user has not pending invitation to this family (OK)
-        # * check user is not member of this family (OK)
-        # * check user already exists but its not member
-        # * User doesn't exists create
-
         qs = self.get_queryset()
 
         if qs.filter(
