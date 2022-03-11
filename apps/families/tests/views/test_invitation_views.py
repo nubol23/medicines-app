@@ -53,6 +53,17 @@ class FamilyInvitationViewSetTests(CustomTestCase):
             response.json(), ["User already has a pending invitation to this family"]
         )
 
+    def test_create_user_already_family_member_fail(self):
+        # Create an already family member user
+        invitee = UserFactory(**self.data)
+        MembershipFactory(user=invitee, family=self.family)
+
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_422_UNPROCESSABLE_ENTITY
+        )
+
+        self.assertEqual(response.json(), ["User is already a member of this family"])
+
     def test_create_invitation_for_new_user_success(self):
         # Assert user doesn't exist
         self.assertFalse(User.objects.filter(email=self.data["email"]).exists())
