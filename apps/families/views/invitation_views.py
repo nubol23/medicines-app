@@ -30,7 +30,7 @@ class FamilyInvitationViewSet(CustomModelViewSet):
         qs = self.get_queryset()
 
         if qs.filter(
-            email__iexact=self.request.user.email,
+            email__iexact=self.request.data.get("email"),
             family__id=self.kwargs["family_id"],
             status=InvitationStatus.PENDING,
         ).exists():
@@ -39,7 +39,7 @@ class FamilyInvitationViewSet(CustomModelViewSet):
             )
 
         if Membership.objects.filter(
-            user=self.request.user,
+            user__email__iexact=self.request.data.get("email"),
             family_id=self.kwargs["family_id"],
         ).exists():
             raise UnprocessableEntityError("User is already a member of this family")
@@ -54,14 +54,20 @@ class FamilyInvitationViewSet(CustomModelViewSet):
         else:
             # If user doesn't exists, create it, create the invitation and send it
             with transaction.atomic():
-                User.objects.create(
+                # TODO: generate random password
+                new_user = User.objects.create_user(
                     email=self.request.data["email"],
                     first_name=self.request.data["first_name"],
                     last_name=self.request.data["last_name"],
                     phone_number=self.request.data["phone_number"],
+                    password="12345",
                 )
+                self.request.data["family"] = self.kwargs["family_id"]
                 super().create(request, *args, **kwargs)
+                # Add user as member of the family
+                new_user.families.add(self.get_family())
 
             # TODO: Send email invitation with a signal
+            print("SEND EMAIL")
 
             return Response("Created the invitation", status=status.HTTP_201_CREATED)

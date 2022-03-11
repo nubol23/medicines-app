@@ -6,7 +6,9 @@ from apps.users.models import User
 
 class FamilyInvitationCreateSerializer(serializers.ModelSerializer):
     family = serializers.PrimaryKeyRelatedField(queryset=Family.objects.all())
-    invited_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    invited_by = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), required=False
+    )
 
     class Meta:
         model = FamilyInvitation
