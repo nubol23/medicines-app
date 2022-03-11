@@ -64,6 +64,21 @@ class FamilyInvitationViewSetTests(CustomTestCase):
 
         self.assertEqual(response.json(), ["User is already a member of this family"])
 
+    def test_add_existing_user_as_member_success(self):
+        # Create non member user
+        invitee = UserFactory(**self.data)
+
+        # Assert is not family member
+        self.assertFalse(invitee.families.filter(id=self.family.id).exists())
+
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_200_OK
+        )
+        self.assertEqual(response.json(), ["added existing user to family"])
+
+        # Assert is family member
+        self.assertTrue(invitee.families.filter(id=self.family.id).exists())
+
     def test_create_invitation_for_new_user_success(self):
         # Assert user doesn't exist
         self.assertFalse(User.objects.filter(email=self.data["email"]).exists())
