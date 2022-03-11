@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from apps.families.models import Family, FamilyInvitation, InvitationStatus, Membership
 from apps.families.permissions import UserIsFamilyMemberPermission
 from apps.families.serializers import FamilyInvitationCreateSerializer
+from apps.families.services.invitation_service import send_family_invitation_email
 from apps.users.models import User
 from utils.errors import UnprocessableEntityError
 from utils.functions import generate_random_password
@@ -65,7 +66,14 @@ class FamilyInvitationViewSet(CustomModelViewSet):
                 family_instance = self.get_family()
                 new_user.families.add(family_instance)
 
-            # TODO: Send email invitation with a signal
-            print("SEND EMAIL")
+            # Send family invitation
+            send_family_invitation_email(
+                first_name=self.request.data["first_name"],
+                inviter=self.request.user.first_name,
+                family_name=family_instance.family_name,
+                username=self.request.data["email"],
+                password=random_password,
+                to_email=self.request.data["email"],
+            )
 
             return Response(["Created the invitation"], status=status.HTTP_201_CREATED)

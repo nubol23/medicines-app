@@ -20,7 +20,7 @@ def send_family_invitation_email(
         "redirect_to": redirect_to,
     }
     send_email(
-        subject=f"{first_name} te invitó a unirse a su familia en MedicinesApp",
+        subject=f"{inviter} te invitó a unirse a su familia en MedicinesApp",
         template="family_invitation.html",
         context=context,
         to=[to_email],
