@@ -7,10 +7,6 @@ from apps.users.models import User
 class FamilyInvitationCreateRequestSerializer(serializers.ModelSerializer):
     """Dummy serializer for documentation purposes"""
 
-    invited_by = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), required=False
-    )
-
     class Meta:
         model = FamilyInvitation
         fields = (
@@ -18,8 +14,6 @@ class FamilyInvitationCreateRequestSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "phone_number",
-            "status",
-            "invited_by",
         )
 
 
