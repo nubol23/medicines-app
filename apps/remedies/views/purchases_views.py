@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
 from apps.remedies.models import Purchase
@@ -9,6 +10,15 @@ from apps.remedies.serializers import (
 from utils.views import CustomModelViewSet
 
 
+@extend_schema_view(
+    create=extend_schema(
+        summary="Create purchase",
+        description="Create a purchase relation with the purchased medicine instance's expiration date",
+        request=PurchaseCreateSerializer,
+        responses=PurchaseRetrieveSerializer,
+        tags=["Medicines"],
+    )
+)
 class PurchasesViewSet(CustomModelViewSet):
     queryset = Purchase.objects.all()
     create_serializer_class = PurchaseCreateSerializer
