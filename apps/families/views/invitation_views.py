@@ -1,19 +1,63 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.families.models import Family, FamilyInvitation, InvitationStatus, Membership
 from apps.families.permissions import UserIsFamilyMemberPermission
-from apps.families.serializers import FamilyInvitationCreateSerializer
+from apps.families.serializers import (
+    FamilyInvitationCreateRequestSerializer,
+    FamilyInvitationCreateSerializer,
+)
 from apps.families.services.invitation_service import send_family_invitation_email
 from apps.users.models import User
-from utils.errors import UnprocessableEntityError
+from utils.errors import BadRequestError, UnprocessableEntityError
 from utils.functions import generate_random_password
 from utils.views import CustomModelViewSet
 
 
+@extend_schema_view(
+    create=extend_schema(
+        summary="Create family invitation",
+        description="Create a family invitation if the user doesn't exist, else assign the user to the family",
+        request=FamilyInvitationCreateRequestSerializer,
+        responses={
+            status.HTTP_201_CREATED: inline_serializer(
+                "CreatedResponse",
+                fields={
+                    "message": serializers.CharField(default="Created the invitation"),
+                },
+            ),
+            status.HTTP_200_OK: inline_serializer(
+                "OkResponse",
+                fields={
+                    "message": serializers.CharField(
+                        default="added existing user to family"
+                    ),
+                },
+            ),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: inline_serializer(
+                "UnprocessableResponse",
+                fields={
+                    "error": serializers.CharField(
+                        default="User already has a pending invitation to this family"
+                    ),
+                },
+            ),
+            status.HTTP_400_BAD_REQUEST: inline_serializer(
+                "BadResponse",
+                fields={
+                    "error": serializers.CharField(
+                        default="User is already a member of this family"
+                    ),
+                },
+            ),
+        },
+        tags=["Family invitations"],
+    )
+)
 class FamilyInvitationViewSet(CustomModelViewSet):
     queryset = FamilyInvitation.objects.all()
     serializer_class = FamilyInvitationCreateSerializer
@@ -38,7 +82,7 @@ class FamilyInvitationViewSet(CustomModelViewSet):
             user__email__iexact=self.request.data.get("email"),
             family_id=self.kwargs["family_id"],
         ).exists():
-            raise UnprocessableEntityError("User is already a member of this family")
+            raise BadRequestError("User is already a member of this family")
 
         invitee = User.objects.filter(
             email__iexact=self.request.data.get("email")
@@ -47,7 +91,7 @@ class FamilyInvitationViewSet(CustomModelViewSet):
             # If invitee user already exists, add to the family
             invitee.families.add(self.get_family())
             return Response(
-                ["added existing user to family"], status=status.HTTP_200_OK
+                {"message": "added existing user to family"}, status=status.HTTP_200_OK
             )
         else:
             # If user doesn't exists, create it, create the invitation and send it
@@ -76,4 +120,6 @@ class FamilyInvitationViewSet(CustomModelViewSet):
                 to_email=self.request.data["email"],
             )
 
-            return Response(["Created the invitation"], status=status.HTTP_201_CREATED)
+            return Response(
+                {"message": "Created the invitation"}, status=status.HTTP_201_CREATED
+            )
