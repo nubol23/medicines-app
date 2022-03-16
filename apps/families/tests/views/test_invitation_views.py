@@ -53,7 +53,8 @@ class FamilyInvitationViewSetTests(CustomTestCase):
         )
 
         self.assertEqual(
-            response.json()["error"], "User already has a pending invitation to this family"
+            response.json()["error"],
+            "User already has a pending invitation to this family",
         )
         mock_send_email.assert_not_called()
 
@@ -64,10 +65,12 @@ class FamilyInvitationViewSetTests(CustomTestCase):
         MembershipFactory(user=invitee, family=self.family)
 
         response = self.backend.post(
-            self.url, data=self.data, status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            self.url, data=self.data, status=status.HTTP_400_BAD_REQUEST
         )
 
-        self.assertEqual(response.json()["error"], "User is already a member of this family")
+        self.assertEqual(
+            response.json()["error"], "User is already a member of this family"
+        )
         mock_send_email.assert_not_called()
 
     @patch("utils.functions.send_mail")
