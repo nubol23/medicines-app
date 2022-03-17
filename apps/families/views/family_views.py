@@ -15,7 +15,7 @@ class UserFamiliesViewSet(CustomModelViewSet):
 
     def get_permissions(self):
         if self.action in ["destroy", "partial_update"]:
-            self.permission_classes += [UserIsFamilyMemberPermission]
+            self.permission_classes = self.permission_classes + [UserIsFamilyMemberPermission]
 
         return super().get_permissions()
 
