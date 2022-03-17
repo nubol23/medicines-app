@@ -1,7 +1,7 @@
 from django.urls import path
 
 from apps.families.views import FamilyMembersViewSet
-from apps.families.views.family_views import UserFamiliesListViewSet
+from apps.families.views.family_views import UserFamiliesViewSet
 from apps.families.views.invitation_views import FamilyInvitationViewSet
 
 app_name = "families"
@@ -20,7 +20,12 @@ urlpatterns = [
     ),
     path(
         "",
-        UserFamiliesListViewSet.as_view({"get": "list"}),
-        name="list-user-families",
+        UserFamiliesViewSet.as_view({"get": "list"}),
+        name="user-families-list",
+    ),
+    path(
+        "<family_id>",
+        UserFamiliesViewSet.as_view({"delete": "destroy"}),
+        name="user-families-details",
     ),
 ]
