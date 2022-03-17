@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 
 from apps.families.models import Family
+from apps.families.permissions import UserIsFamilyMemberPermission
 from apps.families.serializers import ShortFamilySerializer
 from utils.views import CustomModelViewSet
 
@@ -11,6 +12,12 @@ class UserFamiliesViewSet(CustomModelViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = "id"
     lookup_url_kwarg = "family_id"
+
+    def get_permissions(self):
+        if self.action == "destroy":
+            self.permission_classes += [UserIsFamilyMemberPermission]
+
+        return super().get_permissions()
 
     def get_queryset(self):
         qs = super().get_queryset()

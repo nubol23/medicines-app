@@ -44,18 +44,26 @@ class UserFamiliesDestroyViewSetTests(CustomTestCase):
         for family in cls.families:
             MembershipFactory(user=cls.user, family=family)
 
-        another_user = UserFactory()
-        another_family = FamilyFactory()
-        MembershipFactory(user=another_user, family=another_family)
+        cls.another_user = UserFactory()
+        cls.another_family = FamilyFactory()
+        MembershipFactory(user=cls.another_user, family=cls.another_family)
 
         cls.url = reverse(
-            "families:user-families-details",
-            kwargs={"family_id": cls.families[0].id}
+            "families:user-families-details", kwargs={"family_id": cls.families[0].id}
         )
 
     def setUp(self):
         super().setUp()
         self.backend.login(self.user)
+
+    def test_permissions(self):
+        url = reverse(
+            "families:user-families-details",
+            kwargs={"family_id": self.another_family.id},
+        )
+        self.backend.delete(url, status=status.HTTP_403_FORBIDDEN)
+
+        self.backend.delete(self.url, status=status.HTTP_204_NO_CONTENT)
 
     def test_delete_family(self):
         count = Family.objects.count()
