@@ -17,7 +17,13 @@ from apps.users.models import User
         summary="List Family Members",
         description="List all family members given a family id",
         tags=["Family members"],
-    )
+    ),
+    destroy=extend_schema(
+        summary="Remove member from family",
+        description="Remove a member from a family given the user and family ids. <br>"
+        "If the member has a pending invitation to the family, mark it as revoked.",
+        tags=["Family members"],
+    ),
 )
 class FamilyMembersViewSet(ModelViewSet):
     queryset = Membership.objects.all()

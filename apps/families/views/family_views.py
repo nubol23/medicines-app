@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
 from apps.families.models import Family
@@ -6,6 +7,28 @@ from apps.families.serializers import ShortFamilySerializer
 from utils.views import CustomModelViewSet
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List Families",
+        description="List all families for which the current user is a member",
+        tags=["Family"],
+    ),
+    create=extend_schema(
+        summary="Create Family",
+        description="Create family given a name",
+        tags=["Family"],
+    ),
+    partial_update=extend_schema(
+        summary="Update Family",
+        description="Update family name given a family id",
+        tags=["Family"],
+    ),
+    destroy=extend_schema(
+        summary="Delete Family",
+        description="Delete a family given a family id",
+        tags=["Family"],
+    ),
+)
 class UserFamiliesViewSet(CustomModelViewSet):
     queryset = Family.objects.all()
     serializer_class = ShortFamilySerializer
