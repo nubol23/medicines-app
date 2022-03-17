@@ -20,12 +20,12 @@ urlpatterns = [
     ),
     path(
         "",
-        UserFamiliesViewSet.as_view({"get": "list"}),
+        UserFamiliesViewSet.as_view({"get": "list", "post": "create"}),
         name="user-families-list",
     ),
     path(
         "<family_id>",
-        UserFamiliesViewSet.as_view({"delete": "destroy"}),
+        UserFamiliesViewSet.as_view({"delete": "destroy", "put": "partial_update"}),
         name="user-families-details",
     ),
 ]
