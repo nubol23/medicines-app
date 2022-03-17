@@ -71,3 +71,27 @@ class UserFamiliesDestroyViewSetTests(CustomTestCase):
 
         self.assertEqual(Family.objects.count(), count - 1)
         self.assertFalse(Family.objects.filter(id=self.families[0].id).exists())
+
+
+class UserFamiliesCreateViewSetTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+        cls.data = {"family_name": "test family"}
+
+        cls.url = reverse("families:user-families-list")
+
+    def setUp(self):
+        self.backend.login(self.user)
+
+    def test_create_family(self):
+        count = Family.objects.count()
+        response = self.backend.post(
+            self.url, self.data, status=status.HTTP_201_CREATED
+        )
+
+        self.assertEqual(Family.objects.count(), count + 1)
+
+        family = Family.objects.latest("created_on")
+        ValidateShortFamily.validate(self, family, response.json())
