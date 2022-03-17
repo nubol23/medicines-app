@@ -1,7 +1,11 @@
 from django.urls import reverse
 from rest_framework import status
 
-from apps.families.tests.factories import FamilyFactory, MembershipFactory
+from apps.families.tests.factories import (
+    FamilyFactory,
+    FamilyInvitationFactory,
+    MembershipFactory,
+)
 from apps.families.tests.validators import ValidateMember
 from apps.users.tests.factories import UserFactory
 from utils.tests.testcase import CustomTestCase
@@ -15,6 +19,8 @@ class ListFamilyMembersViewSetTests(CustomTestCase):
         cls.family = FamilyFactory()
         # cls.family.members.add(cls.user)
         cls.user_membership = MembershipFactory(user=cls.user, family=cls.family)
+        # User has pending invitation
+        FamilyInvitationFactory(email=cls.user.email)
 
         cls.members = MembershipFactory.create_batch(size=2, family=cls.family)
         # Non member users
