@@ -14,7 +14,7 @@ class UserFamiliesViewSet(CustomModelViewSet):
     lookup_url_kwarg = "family_id"
 
     def get_permissions(self):
-        if self.action == "destroy":
+        if self.action in ["destroy", "partial_update"]:
             self.permission_classes += [UserIsFamilyMemberPermission]
 
         return super().get_permissions()
