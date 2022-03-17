@@ -14,6 +14,11 @@ urlpatterns = [
         name="family-members",
     ),
     path(
+        "<family_id>/delete-member/<user_id>",
+        FamilyMembersViewSet.as_view({"delete": "destroy"}),
+        name="family-members-delete",
+    ),
+    path(
         "<family_id>/create-invitation",
         FamilyInvitationViewSet.as_view({"post": "create"}),
         name="family-create-invitation",
