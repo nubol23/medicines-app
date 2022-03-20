@@ -27,4 +27,12 @@ class PurchaseRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ("id", "medicine", "user", "family", "buy_date", "expiration_date", "units")
+        fields = (
+            "id",
+            "medicine",
+            "user",
+            "family",
+            "buy_date",
+            "expiration_date",
+            "units",
+        )
