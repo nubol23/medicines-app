@@ -1,15 +1,15 @@
 from django.urls import path
 
-from apps.remedies.views import ListAllMedicinesViewSet, PurchasesViewSet
+from apps.remedies.views import MedicinesViewSet, PurchasesViewSet
 
 app_name = "remedies"
 
 
 urlpatterns = [
     path(
-        "medicines-all/",
-        ListAllMedicinesViewSet.as_view({"get": "list"}),
-        name="medicines-all",
+        "medicines/",
+        MedicinesViewSet.as_view({"get": "list", "post": "create"}),
+        name="medicines-list",
     ),
     path(
         "purchase-medicine",
