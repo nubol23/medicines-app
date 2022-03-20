@@ -30,4 +30,4 @@ class PurchaseFactory(factory.django.DjangoModelFactory):
     expiration_date = factory.LazyAttribute(
         lambda _: faker.future_datetime(tzinfo=timezone.utc)
     )
-    units = factory.LazyAttribute(lambda _: faker.numerify("##"))
+    units = factory.LazyAttribute(lambda _: int(faker.numerify("##")))

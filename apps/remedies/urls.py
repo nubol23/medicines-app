@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     path(
         "purchase-medicine",
-        PurchasesViewSet.as_view({"post": "create"}),
-        name="purchase-create",
+        PurchasesViewSet.as_view({"post": "create", "get": "list"}),
+        name="purchase-list",
     ),
 ]
