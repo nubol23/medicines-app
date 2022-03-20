@@ -78,10 +78,10 @@ class ListPurchaseViewSetTests(CustomTestCase):
         cls.medicine = MedicineFactory()
 
         cls.purchases = PurchaseFactory.create_batch(
-            size=3, user=cls.user, family=cls.family
+            size=2, user=cls.user, family=cls.family
         )
-        cls.purchases.extend(PurchaseFactory.create_batch(size=3, family=cls.family))
-        PurchaseFactory.create_batch(size=3)
+        cls.purchases.extend(PurchaseFactory.create_batch(size=2, family=cls.family))
+        PurchaseFactory.create_batch(size=2)
 
         cls.url = reverse("remedies:purchase-list")
 
@@ -109,6 +109,6 @@ class ListPurchaseViewSetTests(CustomTestCase):
         ValidateMultiple.validate(
             self,
             ValidatePurchase.validate,
-            self.purchases[3:],
+            self.purchases[2:],
             response.json(),
         )
