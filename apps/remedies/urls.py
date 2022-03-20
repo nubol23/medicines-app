@@ -12,6 +12,11 @@ urlpatterns = [
         name="medicines-list",
     ),
     path(
+        "medicines/<medicine_id>",
+        MedicinesViewSet.as_view({"put": "partial_update"}),
+        name="medicines-details",
+    ),
+    path(
         "purchase-medicine",
         PurchasesViewSet.as_view({"post": "create"}),
         name="purchase-create",
