@@ -25,3 +25,4 @@ class Purchase(BaseModel):
     )
     buy_date = models.DateTimeField()
     expiration_date = models.DateTimeField()
+    units = models.PositiveIntegerField()
