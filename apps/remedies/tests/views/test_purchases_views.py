@@ -81,6 +81,7 @@ class ListPurchaseViewSetTests(CustomTestCase):
             size=3, user=cls.user, family=cls.family
         )
         cls.purchases.extend(PurchaseFactory.create_batch(size=3, family=cls.family))
+        PurchaseFactory.create_batch(size=3)
 
         cls.url = reverse("remedies:purchase-list")
 

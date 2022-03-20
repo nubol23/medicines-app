@@ -39,9 +39,10 @@ class PurchasesViewSet(CustomModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        qs = qs.filter(family__in=self.request.user.families.all())
 
         filter_by_user = self.request.query_params.get("filter-by-user", False)
-        if filter_by_user.lower() == "true":
+        if str(filter_by_user).lower() == "true":
             qs = qs.filter(user=self.request.user)
 
         return qs
