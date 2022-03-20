@@ -78,9 +78,10 @@ class ListPurchaseViewSetTests(CustomTestCase):
         cls.medicine = MedicineFactory()
 
         cls.purchases = PurchaseFactory.create_batch(
-            size=3, user=cls.user, family=cls.family
+            size=2, user=cls.user, family=cls.family
         )
-        cls.purchases.extend(PurchaseFactory.create_batch(size=3, family=cls.family))
+        cls.purchases.extend(PurchaseFactory.create_batch(size=2, family=cls.family))
+        PurchaseFactory.create_batch(size=2)
 
         cls.url = reverse("remedies:purchase-list")
 
@@ -101,13 +102,56 @@ class ListPurchaseViewSetTests(CustomTestCase):
 
     def test_list_user_in_family_purchases(self):
         response = self.backend.get(
-            self.url, data={"filter-by-user": True}, status=status.HTTP_200_OK
+            self.url, data={"filter_by_user": True}, status=status.HTTP_200_OK
         )
 
         self.purchases.reverse()
         ValidateMultiple.validate(
             self,
             ValidatePurchase.validate,
-            self.purchases[3:],
+            self.purchases[2:],
+            response.json(),
+        )
+
+    def test_list_filtering_by_family(self):
+        family_2 = FamilyFactory()
+        self.user.families.add(family_2)
+        self.user.save()
+        family_3 = FamilyFactory()
+        self.user.families.add(family_3)
+        self.user.save()
+
+        purchases_2 = PurchaseFactory.create_batch(
+            size=2, user=self.user, family=family_2
+        )
+        purchases_3 = PurchaseFactory.create_batch(
+            size=2, user=self.user, family=family_3
+        )
+
+        self.purchases.reverse()
+        purchases_2.reverse()
+        purchases_3.reverse()
+
+        response = self.backend.get(
+            self.url,
+            data={"family_ids": f"{family_3.id}"},
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self,
+            ValidatePurchase.validate,
+            purchases_3,
+            response.json(),
+        )
+
+        response = self.backend.get(
+            self.url,
+            data={"family_ids": f"{self.family.id},{family_2.id}"},
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self,
+            ValidatePurchase.validate,
+            purchases_2 + self.purchases,
             response.json(),
         )
