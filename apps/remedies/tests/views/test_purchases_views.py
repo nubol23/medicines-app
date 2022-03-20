@@ -102,7 +102,7 @@ class ListPurchaseViewSetTests(CustomTestCase):
 
     def test_list_user_in_family_purchases(self):
         response = self.backend.get(
-            self.url, data={"filter-by-user": True}, status=status.HTTP_200_OK
+            self.url, data={"filter_by_user": True}, status=status.HTTP_200_OK
         )
 
         self.purchases.reverse()
