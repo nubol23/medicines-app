@@ -14,7 +14,19 @@ from utils.views import CustomModelViewSet
         summary="List all medicines",
         description="List all medicines in the database",
         tags=["Medicines"],
-    )
+    ),
+    create=extend_schema(
+        summary="Create medicine",
+        request=MedicineCreateUpdateSerializer,
+        responses=MedicineListRetrieveSerializer,
+        tags=["Medicines"],
+    ),
+    partial_update=extend_schema(
+        summary="Update medicine",
+        request=MedicineCreateUpdateSerializer,
+        responses=MedicineListRetrieveSerializer,
+        tags=["Medicines"],
+    ),
 )
 class MedicinesViewSet(CustomModelViewSet):
     queryset = Medicine.objects.all()
