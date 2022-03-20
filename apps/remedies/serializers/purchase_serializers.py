@@ -13,7 +13,7 @@ class PurchaseCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ("medicine", "family", "buy_date", "expiration_date")
+        fields = ("medicine", "family", "buy_date", "expiration_date", "units")
 
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
@@ -27,4 +27,4 @@ class PurchaseRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ("id", "medicine", "user", "family", "buy_date", "expiration_date")
+        fields = ("id", "medicine", "user", "family", "buy_date", "expiration_date", "units")

@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 
 from django.urls import reverse
@@ -24,6 +25,7 @@ class PurchaseViewSetTests(CustomTestCase):
             "family": cls.family.id,
             "buy_date": datetime.now(),
             "expiration_date": datetime.now(),
+            "units": random.randint(1, 20),
         }
 
         cls.url = reverse("remedies:purchase-create")
