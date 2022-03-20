@@ -13,7 +13,7 @@ from apps.remedies.serializers import MedicineListSerializer
         tags=["Medicines"],
     )
 )
-class ListAllMedicinesViewSet(ModelViewSet):
+class MedicinesViewSet(ModelViewSet):
     queryset = Medicine.objects.all()
     serializer_class = MedicineListSerializer
     permission_classes = [IsAuthenticated]

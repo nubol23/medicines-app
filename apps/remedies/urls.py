@@ -1,6 +1,6 @@
 from django.urls import path
 
-from apps.remedies.views import ListAllMedicinesViewSet, PurchasesViewSet
+from apps.remedies.views import PurchasesViewSet, MedicinesViewSet
 
 app_name = "remedies"
 
@@ -8,7 +8,7 @@ app_name = "remedies"
 urlpatterns = [
     path(
         "medicines-all/",
-        ListAllMedicinesViewSet.as_view({"get": "list"}),
+        MedicinesViewSet.as_view({"get": "list"}),
         name="medicines-all",
     ),
     path(
