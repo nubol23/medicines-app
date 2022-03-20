@@ -21,6 +21,8 @@ class MedicinesViewSet(CustomModelViewSet):
     serializer_class = MedicineListRetrieveSerializer
     create_update_serializer_class = MedicineCreateUpdateSerializer
     permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = "medicine_id"
+    lookup_field = "id"
 
     def get_serializer_class(self):
         if self.action in ["create", "partial_update"]:
