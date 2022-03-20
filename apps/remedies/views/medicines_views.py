@@ -1,9 +1,12 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
 
 from apps.remedies.models import Medicine
-from apps.remedies.serializers import MedicineListRetrieveSerializer
+from apps.remedies.serializers import (
+    MedicineCreateUpdateSerializer,
+    MedicineListRetrieveSerializer,
+)
+from utils.views import CustomModelViewSet
 
 
 @extend_schema_view(
@@ -13,7 +16,13 @@ from apps.remedies.serializers import MedicineListRetrieveSerializer
         tags=["Medicines"],
     )
 )
-class MedicinesViewSet(ModelViewSet):
+class MedicinesViewSet(CustomModelViewSet):
     queryset = Medicine.objects.all()
     serializer_class = MedicineListRetrieveSerializer
+    create_update_serializer_class = MedicineCreateUpdateSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action in ["create", "partial_update"]:
+            return self.create_update_serializer_class
+        return self.serializer_class

@@ -13,3 +13,14 @@ class MedicineListRetrieveSerializer(ModelSerializer):
             "quantity",
             "unit",
         )
+
+
+class MedicineCreateUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = Medicine
+        fields = (
+            "name",
+            "maker",
+            "quantity",
+            "unit",
+        )
