@@ -12,7 +12,7 @@ from apps.users.tests.factories import UserFactory
 from utils.tests.testcase import CustomTestCase
 
 
-class PurchaseViewSetTests(CustomTestCase):
+class CreatePurchaseViewSetTests(CustomTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -28,7 +28,7 @@ class PurchaseViewSetTests(CustomTestCase):
             "units": random.randint(1, 20),
         }
 
-        cls.url = reverse("remedies:purchase-create")
+        cls.url = reverse("remedies:purchase-list")
 
     def setUp(self):
         super().setUp()
