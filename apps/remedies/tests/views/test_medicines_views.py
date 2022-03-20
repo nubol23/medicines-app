@@ -103,3 +103,26 @@ class RetrieveMedicineViewSetTests(CustomTestCase):
         response = self.backend.get(self.url, status=status.HTTP_200_OK)
 
         ValidateMedicine.validate(self, self.medicines[1], response.json())
+
+
+class DestroyMedicineViewSetTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+        cls.medicines = MedicineFactory.create_batch(size=3)
+
+        cls.url = reverse(
+            "remedies:medicines-details", kwargs={"medicine_id": cls.medicines[1].id}
+        )
+
+    def setUp(self):
+        super().setUp()
+        self.backend.login(self.user)
+
+    def test_delete_medicine(self):
+        count = Medicine.objects.count()
+        self.backend.delete(self.url, status=status.HTTP_204_NO_CONTENT)
+
+        self.assertEqual(Medicine.objects.count(), count - 1)
+        self.assertFalse(Medicine.objects.filter(id=self.medicines[1].id).exists())

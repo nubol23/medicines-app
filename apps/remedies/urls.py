@@ -13,7 +13,9 @@ urlpatterns = [
     ),
     path(
         "medicines/<medicine_id>",
-        MedicinesViewSet.as_view({"put": "partial_update", "get": "retrieve"}),
+        MedicinesViewSet.as_view(
+            {"put": "partial_update", "get": "retrieve", "delete": "destroy"}
+        ),
         name="medicines-details",
     ),
     path(
