@@ -27,6 +27,11 @@ from utils.views import CustomModelViewSet
         responses=MedicineListRetrieveSerializer,
         tags=["Medicines"],
     ),
+    retrieve=extend_schema(
+        summary="Retrieve medicine",
+        responses=MedicineListRetrieveSerializer,
+        tags=["Medicines"],
+    ),
 )
 class MedicinesViewSet(CustomModelViewSet):
     queryset = Medicine.objects.all()
