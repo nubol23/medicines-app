@@ -32,6 +32,10 @@ from utils.views import CustomModelViewSet
         responses=MedicineListRetrieveSerializer,
         tags=["Medicines"],
     ),
+    destroy=extend_schema(
+        summary="Delete medicine",
+        tags=["Medicines"],
+    ),
 )
 class MedicinesViewSet(CustomModelViewSet):
     queryset = Medicine.objects.all()
