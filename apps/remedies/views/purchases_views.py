@@ -45,4 +45,9 @@ class PurchasesViewSet(CustomModelViewSet):
         if str(filter_by_user).lower() == "true":
             qs = qs.filter(user=self.request.user)
 
+        family_ids = self.request.query_params.get("family_ids", None)
+        if family_ids and isinstance(family_ids, str):
+            family_ids = family_ids.split(",")
+            qs = qs.filter(family__in=family_ids)
+
         return qs
