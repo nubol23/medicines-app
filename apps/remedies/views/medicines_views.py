@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from apps.remedies.models import Medicine
-from apps.remedies.serializers import MedicineListSerializer
+from apps.remedies.serializers import MedicineListRetrieveSerializer
 
 
 @extend_schema_view(
@@ -15,5 +15,5 @@ from apps.remedies.serializers import MedicineListSerializer
 )
 class MedicinesViewSet(ModelViewSet):
     queryset = Medicine.objects.all()
-    serializer_class = MedicineListSerializer
+    serializer_class = MedicineListRetrieveSerializer
     permission_classes = [IsAuthenticated]

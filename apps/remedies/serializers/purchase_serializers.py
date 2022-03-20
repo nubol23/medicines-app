@@ -3,7 +3,7 @@ from rest_framework import serializers
 from apps.families.models import Family
 from apps.families.serializers import ShortFamilySerializer
 from apps.remedies.models import Medicine, Purchase
-from apps.remedies.serializers import MedicineListSerializer
+from apps.remedies.serializers import MedicineListRetrieveSerializer
 from apps.users.serializers import UserSerializer
 
 
@@ -21,7 +21,7 @@ class PurchaseCreateSerializer(serializers.ModelSerializer):
 
 
 class PurchaseRetrieveSerializer(serializers.ModelSerializer):
-    medicine = MedicineListSerializer()
+    medicine = MedicineListRetrieveSerializer()
     user = UserSerializer()
     family = ShortFamilySerializer()
 

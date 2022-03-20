@@ -3,7 +3,7 @@ from rest_framework.serializers import ModelSerializer
 from apps.remedies.models import Medicine
 
 
-class MedicineListSerializer(ModelSerializer):
+class MedicineListRetrieveSerializer(ModelSerializer):
     class Meta:
         model = Medicine
         fields = (
