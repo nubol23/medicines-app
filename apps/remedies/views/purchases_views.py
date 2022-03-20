@@ -16,7 +16,7 @@ from utils.views import CustomModelViewSet
         description="Create a purchase relation with the purchased medicine instance's expiration date",
         request=PurchaseCreateSerializer,
         responses=PurchaseRetrieveSerializer,
-        tags=["Medicines"],
+        tags=["Purchases"],
     )
 )
 class PurchasesViewSet(CustomModelViewSet):
