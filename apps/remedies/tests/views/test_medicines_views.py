@@ -82,3 +82,24 @@ class UpdateMedicineViewSetTests(CustomTestCase):
 
         self.medicine.refresh_from_db()
         ValidateMedicine.validate(self, self.medicine, response.json())
+
+
+class RetrieveMedicineViewSetTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+        cls.medicines = MedicineFactory.create_batch(size=3)
+
+        cls.url = reverse(
+            "remedies:medicines-details", kwargs={"medicine_id": cls.medicines[1].id}
+        )
+
+    def setUp(self):
+        super().setUp()
+        self.backend.login(self.user)
+
+    def test_retrieve_medicine(self):
+        response = self.backend.get(self.url, status=status.HTTP_200_OK)
+
+        ValidateMedicine.validate(self, self.medicines[1], response.json())

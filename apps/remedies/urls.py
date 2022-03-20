@@ -13,7 +13,7 @@ urlpatterns = [
     ),
     path(
         "medicines/<medicine_id>",
-        MedicinesViewSet.as_view({"put": "partial_update"}),
+        MedicinesViewSet.as_view({"put": "partial_update", "get": "retrieve"}),
         name="medicines-details",
     ),
     path(
