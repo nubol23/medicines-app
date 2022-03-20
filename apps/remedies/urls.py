@@ -7,9 +7,9 @@ app_name = "remedies"
 
 urlpatterns = [
     path(
-        "medicines-all/",
-        MedicinesViewSet.as_view({"get": "list"}),
-        name="medicines-all",
+        "medicines/",
+        MedicinesViewSet.as_view({"get": "list", "post": "create"}),
+        name="medicines-list",
     ),
     path(
         "purchase-medicine",

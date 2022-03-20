@@ -15,7 +15,7 @@ class ListAllMedicinesViewSetTests(CustomTestCase):
 
         cls.medicines = MedicineFactory.create_batch(size=3)
 
-        cls.url = reverse("remedies:medicines-all")
+        cls.url = reverse("remedies:medicines-list")
 
     def setUp(self):
         super().setUp()
