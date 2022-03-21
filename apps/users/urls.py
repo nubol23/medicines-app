@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from apps.users.views import (
     ActivateUserView,
     CustomTokenObtainPairView,
-    UserExistsViewSet,
+    UserExistsViewSet, UserViewSet,
 )
 
 app_name = "users"
@@ -15,4 +15,5 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("<user_email>/exists/", UserExistsViewSet.as_view(), name="user-exists"),
     path("activate", ActivateUserView.as_view(), name="activate-user"),
+    path("register", UserViewSet.as_view({"post": "create"}), name="register-user"),
 ]

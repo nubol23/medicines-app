@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.families.models import FamilyInvitation, InvitationStatus
 from apps.users import serializers
 from apps.users.models import User
-from apps.users.serializers import UserCreateSerializer
+from apps.users.serializers import UserCreateSerializer, UserSerializer
 from utils.errors import UnprocessableEntityError
 from utils.views import CustomModelViewSet
 
@@ -87,5 +87,12 @@ class ActivateUserView(APIView):
 
 class UserViewSet(CustomModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserCreateSerializer
+    create_serializer_class = UserCreateSerializer
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return self.create_serializer_class
+
+        return self.serializer_class
