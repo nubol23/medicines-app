@@ -1,11 +1,16 @@
+from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
 from apps.remedies.models import Purchase
-from apps.remedies.permissions import UserHasFamilyAccessPermission
+from apps.remedies.permissions import (
+    UserHasFamilyAccessObjectPermission,
+    UserHasFamilyAccessPermission,
+)
 from apps.remedies.serializers import (
     PurchaseCreateSerializer,
     PurchaseRetrieveSerializer,
+    PurchaseUpdateSerializer,
 )
 from utils.views import CustomModelViewSet
 
@@ -42,19 +47,31 @@ from utils.views import CustomModelViewSet
 class PurchasesViewSet(CustomModelViewSet):
     queryset = Purchase.objects.all()
     create_serializer_class = PurchaseCreateSerializer
+    update_serializer_class = PurchaseUpdateSerializer
     serializer_class = PurchaseRetrieveSerializer
     permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = "purchase_id"
+    lookup_field = "id"
+
+    def get_purchase_bypass_qs(self):
+        return get_object_or_404(Purchase, id=self.kwargs.get("purchase_id"))
 
     def get_permissions(self):
-        if self.action in ["create", "update", "retrieve", "partial_update"]:
+        if self.action in ["create"]:
             self.permission_classes = self.permission_classes + [
                 UserHasFamilyAccessPermission
+            ]
+        elif self.action in ["destroy", "retrieve", "partial_update"]:
+            self.permission_classes = self.permission_classes + [
+                UserHasFamilyAccessObjectPermission
             ]
         return super().get_permissions()
 
     def get_serializer_class(self):
         if self.action == "create":
             return self.create_serializer_class
+        if self.action == "partial_update":
+            return self.update_serializer_class
         return self.serializer_class
 
     def get_queryset(self):

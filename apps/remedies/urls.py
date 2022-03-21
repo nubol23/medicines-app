@@ -14,13 +14,18 @@ urlpatterns = [
     path(
         "medicines/<medicine_id>",
         MedicinesViewSet.as_view(
-            {"put": "partial_update", "get": "retrieve", "delete": "destroy"}
+            {"patch": "partial_update", "get": "retrieve", "delete": "destroy"}
         ),
         name="medicines-details",
     ),
     path(
-        "purchase-medicine",
+        "purchase",
         PurchasesViewSet.as_view({"post": "create", "get": "list"}),
         name="purchase-list",
+    ),
+    path(
+        "purchase/<purchase_id>",
+        PurchasesViewSet.as_view({"patch": "partial_update"}),
+        name="purchase-details",
     ),
 ]

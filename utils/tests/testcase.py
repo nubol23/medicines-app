@@ -37,6 +37,27 @@ class CustomAPIClient(APIClient):
         self.assert_status(response, extra)
         return response
 
+    def put(
+        self, path, data=None, format="json", content_type=None, follow=False, **extra
+    ):
+        response = super().put(path, data, format, content_type, follow, **extra)
+        self.assert_status(response, extra)
+        return response
+
+    def patch(
+        self, path, data=None, format="json", content_type=None, follow=False, **extra
+    ):
+        response = super().patch(path, data, format, content_type, follow, **extra)
+        self.assert_status(response, extra)
+        return response
+
+    def delete(
+        self, path, data=None, format="json", content_type=None, follow=False, **extra
+    ):
+        response = super().delete(path, data, format, content_type, follow, **extra)
+        self.assert_status(response, extra)
+        return response
+
 
 class CustomTestCase(TestCase):
     @cached_property

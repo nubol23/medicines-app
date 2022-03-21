@@ -78,7 +78,9 @@ class UpdateMedicineViewSetTests(CustomTestCase):
         self.backend.login(self.user)
 
     def test_update_medicine(self):
-        response = self.backend.put(self.url, data=self.data, status=status.HTTP_200_OK)
+        response = self.backend.patch(
+            self.url, data=self.data, status=status.HTTP_200_OK
+        )
 
         self.medicine.refresh_from_db()
         ValidateMedicine.validate(self, self.medicine, response.json())

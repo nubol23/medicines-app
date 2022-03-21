@@ -30,7 +30,7 @@ urlpatterns = [
     ),
     path(
         "<family_id>",
-        UserFamiliesViewSet.as_view({"delete": "destroy", "put": "partial_update"}),
+        UserFamiliesViewSet.as_view({"delete": "destroy", "patch": "partial_update"}),
         name="user-families-details",
     ),
 ]

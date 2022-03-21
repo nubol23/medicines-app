@@ -20,6 +20,12 @@ class PurchaseCreateSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class PurchaseUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Purchase
+        fields = ("buy_date", "expiration_date", "units")
+
+
 class PurchaseRetrieveSerializer(serializers.ModelSerializer):
     medicine = MedicineListRetrieveSerializer()
     user = UserSerializer()

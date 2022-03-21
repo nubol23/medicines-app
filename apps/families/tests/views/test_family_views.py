@@ -124,12 +124,12 @@ class UserFamiliesUpdateViewSetTests(CustomTestCase):
             "families:user-families-details",
             kwargs={"family_id": self.another_family.id},
         )
-        self.backend.put(url, self.data, status=status.HTTP_403_FORBIDDEN)
+        self.backend.patch(url, self.data, status=status.HTTP_403_FORBIDDEN)
 
-        self.backend.put(self.url, self.data, status=status.HTTP_200_OK)
+        self.backend.patch(self.url, self.data, status=status.HTTP_200_OK)
 
     def test_update_family(self):
-        self.backend.put(self.url, self.data, status=status.HTTP_200_OK)
+        self.backend.patch(self.url, self.data, status=status.HTTP_200_OK)
         self.families[0].refresh_from_db()
 
         self.assertEqual(self.families[0].family_name, self.data["family_name"])
