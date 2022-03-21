@@ -45,6 +45,21 @@ from utils.views import CustomModelViewSet
         ],
         tags=["Purchases"],
     ),
+    partial_update=extend_schema(
+        summary="Update Purchase",
+        request=PurchaseUpdateSerializer,
+        responses=PurchaseRetrieveSerializer,
+        tags=["Purchases"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve purchase",
+        responses=PurchaseRetrieveSerializer,
+        tags=["Purchases"],
+    ),
+    destroy=extend_schema(
+        summary="Delete purchase",
+        tags=["Purchases"],
+    ),
 )
 class PurchasesViewSet(CustomModelViewSet):
     queryset = Purchase.objects.all()
