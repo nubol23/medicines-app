@@ -25,7 +25,7 @@ urlpatterns = [
     ),
     path(
         "purchase/<purchase_id>",
-        PurchasesViewSet.as_view({"patch": "partial_update"}),
+        PurchasesViewSet.as_view({"patch": "partial_update", "get": "retrieve"}),
         name="purchase-details",
     ),
 ]

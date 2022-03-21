@@ -219,3 +219,54 @@ class UpdatePurchaseViewSetTests(CustomTestCase):
 
         self.purchase.refresh_from_db()
         ValidatePurchase.validate(self, self.purchase, response.json())
+
+
+class RetrievePurchaseViewSetTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.family = FamilyFactory()
+        cls.user.families.add(cls.family)
+        cls.medicine = MedicineFactory()
+        cls.purchases = PurchaseFactory.create_batch(
+            size=3,
+            medicine=cls.medicine,
+            user=cls.user,
+            family=cls.family,
+        )
+
+        cls.url = reverse(
+            "remedies:purchase-details", kwargs={"purchase_id": cls.purchases[1].id}
+        )
+
+    def setUp(self):
+        super().setUp()
+        self.backend.login(self.user)
+
+    def test_access_permission(self):
+        self.backend.get(self.url, status=status.HTTP_200_OK)
+
+        self.backend.logout()
+        self.backend.get(self.url, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Member of no family
+        non_member_user = UserFactory()
+        self.backend.login(non_member_user)
+        response = self.backend.get(self.url, status=status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            response.json()["detail"], "User doesn't have access to this purchase"
+        )
+        self.backend.logout()
+
+        # Member of other family
+        MembershipFactory(user=non_member_user)
+        self.backend.login(non_member_user)
+        self.backend.get(self.url, status=status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            response.json()["detail"], "User doesn't have access to this purchase"
+        )
+
+    def test_retrieve_purchase(self):
+        response = self.backend.get(self.url, status=status.HTTP_200_OK)
+
+        ValidatePurchase.validate(self, self.purchases[1], response.json())
