@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 
-from apps.families.models import FamilyInvitation, Membership, InvitationStatus
+from apps.families.models import FamilyInvitation, InvitationStatus, Membership
 from apps.families.tests.factories import (
     FamilyFactory,
     FamilyInvitationFactory,

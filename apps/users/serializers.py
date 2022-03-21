@@ -28,3 +28,18 @@ class UserSerializer(ModelSerializer):
             "email",
             "phone_number",
         )
+
+
+class UserCreateSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "email",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "password",
+        )
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)

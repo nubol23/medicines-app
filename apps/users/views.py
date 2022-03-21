@@ -11,7 +11,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.families.models import FamilyInvitation, InvitationStatus
 from apps.users import serializers
 from apps.users.models import User
+from apps.users.serializers import UserCreateSerializer
 from utils.errors import UnprocessableEntityError
+from utils.views import CustomModelViewSet
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -81,3 +83,9 @@ class ActivateUserView(APIView):
 
         else:
             raise UnprocessableEntityError("invalid user")
+
+
+class UserViewSet(CustomModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
+    permission_classes = [AllowAny]
