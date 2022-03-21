@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 
-from apps.families.models import FamilyInvitation, Membership
+from apps.families.models import FamilyInvitation, Membership, InvitationStatus
 from apps.families.tests.factories import (
     FamilyFactory,
     FamilyInvitationFactory,
@@ -124,4 +124,4 @@ class RemoveFamilyMembersViewSetTests(CustomTestCase):
             Membership.objects.filter(family=self.family, user=self.user).exists()
         )
         invitation = FamilyInvitation.objects.get(email=self.user.email)
-        self.assertEqual(invitation.status, "RE")
+        self.assertEqual(invitation.status, InvitationStatus.REVOKED)
