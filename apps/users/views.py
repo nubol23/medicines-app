@@ -53,7 +53,7 @@ class ActivateUserView(APIView):
                     invitation.save()
 
             return Response(
-                {"message": "user validated correctly"}, status=status.HTTP_200_OK
+                {"message": "user activated correctly"}, status=status.HTTP_200_OK
             )
 
         else:
