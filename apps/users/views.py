@@ -4,7 +4,7 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.serializers import CharField
+from rest_framework.serializers import CharField, UUIDField
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -28,6 +28,7 @@ class UserExistsViewSet(APIView):
             "ExistResponse",
             fields={"exists": CharField(default="true")},
         ),
+        tags=["Users"],
     )
     def get(self, request=None, format=None, **kwargs):
         return Response(
@@ -38,6 +39,28 @@ class UserExistsViewSet(APIView):
 class ActivateUserView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        summary="Activate user",
+        description="Activate user and mark any pending invitation with that user's email as accepted.",
+        request=inline_serializer(
+            "ActivateUserSerializer", fields={"user_id": UUIDField()}
+        ),
+        responses={
+            status.HTTP_200_OK: inline_serializer(
+                "ActivateOkResponse",
+                fields={
+                    "message": CharField(default="user activated correctly"),
+                },
+            ),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: inline_serializer(
+                "ActivateUnprocessableResponse",
+                fields={
+                    "error": CharField(default="invalid user"),
+                },
+            ),
+        },
+        tags=["Users"],
+    )
     def post(self, request, format=None, **kwargs):
         user_id = self.request.data.get("user_id", None)
         if user_id:
