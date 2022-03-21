@@ -17,10 +17,9 @@ class UserHasFamilyAccessPermission(permissions.BasePermission):
 class UserHasFamilyAccessObjectPermission(permissions.BasePermission):
     message = "User doesn't have access to this purchase"
 
-    # def has_permission(self, request, view):
-
-        # return request.user.families.filter(id=).exists()
+    def has_permission(self, request, view):
+        purchase = view.get_purchase_bypass_qs()
+        return request.user.families.filter(id=purchase.family.id).exists()
 
     def has_object_permission(self, request, view, obj):
-        print(obj.family.id)
         return request.user.families.filter(id=obj.family.id).exists()
