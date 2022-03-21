@@ -155,3 +155,37 @@ class ListPurchaseViewSetTests(CustomTestCase):
             purchases_2 + self.purchases,
             response.json(),
         )
+
+
+class UpdatePurchaseViewSetTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.family = FamilyFactory()
+        cls.user.families.add(cls.family)
+        cls.medicine = MedicineFactory()
+        cls.purchase = PurchaseFactory(
+            medicine=cls.medicine,
+            user=cls.user,
+            family=cls.family,
+        )
+
+        cls.data = {
+            "buy_date": datetime.now(),
+            "expiration_date": datetime.now(),
+            "units": random.randint(1, 20),
+        }
+
+        cls.url = reverse(
+            "remedies:purchase-details", kwargs={"purchase_id": cls.purchase.id}
+        )
+
+    def setUp(self):
+        super().setUp()
+        self.backend.login(self.user)
+
+    def test_update_purchase(self):
+        response = self.backend.put(self.url, data=self.data, status=status.HTTP_200_OK)
+
+        self.purchase.refresh_from_db()
+        ValidatePurchase.validate(self, self.purchase, response.json())

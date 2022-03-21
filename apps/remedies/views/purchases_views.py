@@ -2,10 +2,14 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema
 from rest_framework.permissions import IsAuthenticated
 
 from apps.remedies.models import Purchase
-from apps.remedies.permissions import UserHasFamilyAccessPermission, UserHasFamilyAccessObjectPermission
+from apps.remedies.permissions import (
+    UserHasFamilyAccessObjectPermission,
+    UserHasFamilyAccessPermission,
+)
 from apps.remedies.serializers import (
     PurchaseCreateSerializer,
-    PurchaseRetrieveSerializer, PurchaseUpdateSerializer,
+    PurchaseRetrieveSerializer,
+    PurchaseUpdateSerializer,
 )
 from utils.views import CustomModelViewSet
 
