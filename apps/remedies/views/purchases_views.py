@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
@@ -54,7 +56,10 @@ class PurchasesViewSet(CustomModelViewSet):
     lookup_field = "id"
 
     def get_purchase_bypass_qs(self):
-        return get_object_or_404(Purchase, id=self.kwargs.get("purchase_id"))
+        try:
+            return get_object_or_404(Purchase, id=self.kwargs.get("purchase_id"))
+        except DjangoValidationError:
+            raise Http404
 
     def get_permissions(self):
         if self.action in ["create"]:
