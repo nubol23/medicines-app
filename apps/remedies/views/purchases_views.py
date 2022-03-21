@@ -2,10 +2,10 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema
 from rest_framework.permissions import IsAuthenticated
 
 from apps.remedies.models import Purchase
-from apps.remedies.permissions import UserHasFamilyAccessPermission
+from apps.remedies.permissions import UserHasFamilyAccessPermission, UserHasFamilyAccessObjectPermission
 from apps.remedies.serializers import (
     PurchaseCreateSerializer,
-    PurchaseRetrieveSerializer,
+    PurchaseRetrieveSerializer, PurchaseUpdateSerializer,
 )
 from utils.views import CustomModelViewSet
 
@@ -42,13 +42,20 @@ from utils.views import CustomModelViewSet
 class PurchasesViewSet(CustomModelViewSet):
     queryset = Purchase.objects.all()
     create_serializer_class = PurchaseCreateSerializer
+    update_serializer_class = PurchaseUpdateSerializer
     serializer_class = PurchaseRetrieveSerializer
     permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = "purchase_id"
+    lookup_field = "id"
 
     def get_permissions(self):
-        if self.action in ["create", "update", "retrieve", "partial_update"]:
+        if self.action in ["create"]:
             self.permission_classes = self.permission_classes + [
                 UserHasFamilyAccessPermission
+            ]
+        elif self.action in ["destroy", "retrieve", "partial_update"]:
+            self.permission_classes = self.permission_classes + [
+                UserHasFamilyAccessObjectPermission
             ]
         return super().get_permissions()
 
