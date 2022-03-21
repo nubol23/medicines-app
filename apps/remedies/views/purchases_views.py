@@ -62,6 +62,8 @@ class PurchasesViewSet(CustomModelViewSet):
     def get_serializer_class(self):
         if self.action == "create":
             return self.create_serializer_class
+        if self.action == "partial_update":
+            return self.update_serializer_class
         return self.serializer_class
 
     def get_queryset(self):
