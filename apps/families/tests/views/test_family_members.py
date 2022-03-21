@@ -105,7 +105,7 @@ class RemoveFamilyMembersViewSetTests(CustomTestCase):
         self.backend.logout()
 
         self.backend.login(self.user)
-        self.backend.delete(url, status=status.HTTP_200_OK)
+        self.backend.delete(url, status=status.HTTP_204_NO_CONTENT)
 
     def test_remove_already_member_user(self):
         user = self.members[0].user
