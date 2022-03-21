@@ -126,3 +126,27 @@ class FamilyInvitationViewSetTests(CustomTestCase):
     #         "phone_number": settings.PERSONAL_TEST_PHONE,
     #     }
     #     self.backend.post(self.url, data=data, status=status.HTTP_201_CREATED)
+
+
+class AcceptInvitationViewTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory(is_active=False)
+        cls.invitation = FamilyInvitationFactory(email=cls.user.email)
+
+        cls.data = {"user_id": cls.user.id}
+
+        cls.url = reverse("users:activate-user")
+
+    def test_activate_user_and_accept_invitation(self):
+        self.assertEqual(self.invitation.status, InvitationStatus.PENDING)
+
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_200_OK
+        )
+        self.assertEqual(response.json()["message"], "user activated correctly")
+
+        self.backend.login(self.user)
+
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, InvitationStatus.ACCEPTED)
