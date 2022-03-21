@@ -184,8 +184,30 @@ class UpdatePurchaseViewSetTests(CustomTestCase):
         super().setUp()
         self.backend.login(self.user)
 
+    def test_access_permission_a(self):
+        # self.backend.patch(self.url, data=self.data, status=status.HTTP_200_OK)
+        #
+        # self.backend.logout()
+        # self.backend.patch(self.url, data=self.data, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Member of no family
+        non_member_user = UserFactory()
+        self.backend.login(non_member_user)
+        response = self.backend.patch(
+            self.url, data=self.data, status=status.HTTP_403_FORBIDDEN
+        )
+        print(response.json())
+        # self.backend.logout()
+        #
+        # # Member of other family
+        # MembershipFactory(user=non_member_user)
+        # self.backend.login(non_member_user)
+        # self.backend.patch(self.url, data=self.data, status=status.HTTP_403_FORBIDDEN)
+        # print("a")
+        # self.backend.logout()
+
     def test_update_purchase(self):
-        response = self.backend.put(self.url, data=self.data, status=status.HTTP_200_OK)
+        response = self.backend.patch(self.url, data=self.data, status=status.HTTP_200_OK)
 
         self.purchase.refresh_from_db()
         ValidatePurchase.validate(self, self.purchase, response.json())
