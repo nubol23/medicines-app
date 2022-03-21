@@ -266,7 +266,22 @@ class RetrievePurchaseViewSetTests(CustomTestCase):
             response.json()["detail"], "User doesn't have access to this purchase"
         )
 
-    def test_retrieve_purchase(self):
+    def test_retrieve_purchase_fail(self):
+        # Invalid uuid
+        self.backend.get(
+            reverse("remedies:purchase-details", kwargs={"purchase_id": "random_id"}),
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+        # Valid uuid, but non existent purchase
+        purchase = PurchaseFactory()
+        url = (
+            reverse("remedies:purchase-details", kwargs={"purchase_id": purchase.id}),
+        )
+        purchase.delete()
+        self.backend.get(url, status=status.HTTP_404_NOT_FOUND)
+
+    def test_retrieve_purchase_success(self):
         response = self.backend.get(self.url, status=status.HTTP_200_OK)
 
         ValidatePurchase.validate(self, self.purchases[1], response.json())
