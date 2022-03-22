@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.urls import reverse
 from rest_framework import status
 
@@ -64,12 +66,15 @@ class CreateUserViewSetTests(CustomTestCase):
 
         cls.url = reverse("users:register-user")
 
-    def test_create_user_with_password(self):
+    @patch("utils.functions.send_mail")
+    def test_create_user_with_password(self, mock_send_email):
         count = User.objects.count()
         response = self.backend.post(
             self.url, data=self.data, status=status.HTTP_201_CREATED
         )
         self.assertEqual(User.objects.count(), count + 1)
+
+        mock_send_email.assert_called_once()
 
         user = User.objects.latest("created_on")
         ValidateUser.validate(self, user, response.json())
@@ -90,3 +95,21 @@ class CreateUserViewSetTests(CustomTestCase):
 
         # Login with correct password
         self.backend.login(user, password="test_password")
+
+    # from django.test import override_settings
+    #
+    # @override_settings(EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend")
+    # def test_send_activate_email_to_me(self):
+    #     import config.settings.default as settings
+    #
+    #     data = {
+    #         "email": settings.PERSONAL_TEST_EMAIL,
+    #         "first_name": settings.PERSONAL_TEST_FIRST_NAME,
+    #         "last_name": settings.PERSONAL_TEST_LAST_NAME,
+    #         "phone_number": settings.PERSONAL_TEST_PHONE,
+    #         "password": "test_password",
+    #     }
+    #
+    #     self.backend.post(
+    #         self.url, data=data, status=status.HTTP_201_CREATED
+    #     )
