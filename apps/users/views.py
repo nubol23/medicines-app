@@ -12,6 +12,7 @@ from apps.families.models import FamilyInvitation, InvitationStatus
 from apps.users import serializers
 from apps.users.models import User
 from apps.users.serializers import UserCreateSerializer, UserSerializer
+from apps.users.services.activate_service import send_activate_user_email
 from utils.errors import UnprocessableEntityError
 from utils.views import CustomModelViewSet
 
@@ -96,3 +97,12 @@ class UserViewSet(CustomModelViewSet):
             return self.create_serializer_class
 
         return self.serializer_class
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+
+        email = response.data["email"]
+        first_name = response.data["first_name"]
+        send_activate_user_email(first_name=first_name, to_email=email)
+
+        return response
