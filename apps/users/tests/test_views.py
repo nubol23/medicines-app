@@ -66,10 +66,27 @@ class CreateUserViewSetTests(CustomTestCase):
 
     def test_create_user_with_password(self):
         count = User.objects.count()
-
-        response = self.backend.post(self.url, data=self.data, status=status.HTTP_201_CREATED)
-
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_201_CREATED
+        )
         self.assertEqual(User.objects.count(), count + 1)
 
         user = User.objects.latest("created_on")
         ValidateUser.validate(self, user, response.json())
+
+        # Fail login in as inactive user
+        with self.assertRaisesMessage(KeyError, "access"):
+            self.backend.login(user)
+
+        # Activate user
+        activate_url = reverse("users:activate-user")
+        self.backend.post(
+            activate_url, data={"user_id": user.id}, status=status.HTTP_200_OK
+        )
+
+        # Login with incorrect password
+        with self.assertRaisesMessage(KeyError, "access"):
+            self.backend.login(user)
+
+        # Login with correct password
+        self.backend.login(user, password="test_password")

@@ -4,7 +4,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from apps.users.views import (
     ActivateUserView,
     CustomTokenObtainPairView,
-    UserExistsViewSet, UserViewSet,
+    UserExistsViewSet,
+    UserViewSet,
 )
 
 app_name = "users"
