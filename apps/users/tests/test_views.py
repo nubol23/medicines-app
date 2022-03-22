@@ -1,7 +1,10 @@
 from django.urls import reverse
 from rest_framework import status
 
+from apps.users.models import User
 from apps.users.tests.factories import UserFactory
+from apps.users.tests.validators import ValidateUser
+from utils.tests.faker import faker
 from utils.tests.testcase import CustomTestCase
 
 
@@ -46,3 +49,44 @@ class ActivateUserViewTests(CustomTestCase):
         self.assertEqual(response.json()["message"], "user activated correctly")
 
         self.backend.login(self.user)
+
+
+class CreateUserViewSetTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.data = {
+            "email": faker.email(),
+            "first_name": faker.name().split()[0],
+            "last_name": faker.name().split()[-1],
+            "phone_number": "591" + faker.numerify("#" * 8),
+            "password": "test_password",
+        }
+
+        cls.url = reverse("users:register-user")
+
+    def test_create_user_with_password(self):
+        count = User.objects.count()
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_201_CREATED
+        )
+        self.assertEqual(User.objects.count(), count + 1)
+
+        user = User.objects.latest("created_on")
+        ValidateUser.validate(self, user, response.json())
+
+        # Fail login in as inactive user
+        with self.assertRaisesMessage(KeyError, "access"):
+            self.backend.login(user)
+
+        # Activate user
+        activate_url = reverse("users:activate-user")
+        self.backend.post(
+            activate_url, data={"user_id": user.id}, status=status.HTTP_200_OK
+        )
+
+        # Login with incorrect password
+        with self.assertRaisesMessage(KeyError, "access"):
+            self.backend.login(user)
+
+        # Login with correct password
+        self.backend.login(user, password="test_password")
