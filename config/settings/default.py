@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import datetime as dt
 import os
 from pathlib import Path
 
@@ -154,6 +155,13 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SIMPLE_JWT = {
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": True,
+    'ACCESS_TOKEN_LIFETIME': dt.timedelta(days=10),
+    "REFRESH_TOKEN_LIFETIME": dt.timedelta(days=20),
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
