@@ -36,4 +36,7 @@ class FamilySerializer(ModelSerializer):
 class ShortFamilySerializer(ModelSerializer):
     class Meta:
         model = Family
-        fields = ("family_name",)
+        fields = (
+            "id",
+            "family_name",
+        )
