@@ -94,6 +94,7 @@ class UserFamiliesCreateViewSetTests(CustomTestCase):
         self.assertEqual(Family.objects.count(), count + 1)
 
         family = Family.objects.latest("created_on")
+        self.assertTrue(family.members.filter(id=self.user.id).exists())
         ValidateShortFamily.validate(self, family, response.json())
 
 
