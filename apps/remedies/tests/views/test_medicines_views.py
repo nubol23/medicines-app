@@ -31,6 +31,70 @@ class ListAllMedicinesViewSetTests(CustomTestCase):
             self, ValidateMedicine.validate, self.medicines, response.json()
         )
 
+    def test_filter_medicines_by_name(self):
+        med_1 = MedicineFactory(name="Paracetamol", maker="Laboratorio Chile")
+        med_2 = MedicineFactory(name="Azitromicina", maker="Delta")
+
+        response = self.backend.get(
+            self.url,
+            data={
+                "name": "ol",
+            },
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self, ValidateMedicine.validate, [med_1], response.json()
+        )
+
+        response = self.backend.get(
+            self.url,
+            data={
+                "name": "para",
+            },
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self, ValidateMedicine.validate, [med_1], response.json()
+        )
+
+        response = self.backend.get(
+            self.url,
+            data={
+                "name": "azitrom",
+            },
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self, ValidateMedicine.validate, [med_2], response.json()
+        )
+
+    def test_filter_medicines_by_maker(self):
+        med_1 = MedicineFactory(name="Paracetamol", maker="Laboratorio Chile")
+        med_2 = MedicineFactory(name="Azitromicina", maker="Delta")
+
+        response = self.backend.get(
+            self.url,
+            data={
+                "maker": "delt",
+            },
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self, ValidateMedicine.validate, [med_2], response.json()
+        )
+
+        response = self.backend.get(
+            self.url,
+            data={
+                "name": "paracet",
+                "maker": "delt",
+            },
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self, ValidateMedicine.validate, [med_2, med_1], response.json()
+        )
+
 
 class CreateMedicineViewSetTests(CustomTestCase):
     @classmethod

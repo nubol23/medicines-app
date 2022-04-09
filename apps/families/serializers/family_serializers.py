@@ -43,7 +43,7 @@ class ShortFamilySerializer(ModelSerializer):
 
     def create(self, validated_data):
         instance = super().create(validated_data)
-        instance.members.add(self.context['request'].user)
+        instance.members.add(self.context["request"].user)
         instance.save()
 
         return instance
