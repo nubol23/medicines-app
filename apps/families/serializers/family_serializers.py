@@ -36,4 +36,14 @@ class FamilySerializer(ModelSerializer):
 class ShortFamilySerializer(ModelSerializer):
     class Meta:
         model = Family
-        fields = ("family_name",)
+        fields = (
+            "id",
+            "family_name",
+        )
+
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        instance.members.add(self.context['request'].user)
+        instance.save()
+
+        return instance

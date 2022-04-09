@@ -160,7 +160,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
-    'ACCESS_TOKEN_LIFETIME': dt.timedelta(days=10),
+    "ACCESS_TOKEN_LIFETIME": dt.timedelta(days=10),
     "REFRESH_TOKEN_LIFETIME": dt.timedelta(days=20),
 }
 
