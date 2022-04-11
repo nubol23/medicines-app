@@ -18,6 +18,11 @@ from utils.views import CustomModelViewSet
         description="Create family given a name",
         tags=["Family"],
     ),
+    retrieve=extend_schema(
+        summary="Retrieve Family",
+        description="Retrieve a family name given a family id",
+        tags=["Family"],
+    ),
     partial_update=extend_schema(
         summary="Update Family",
         description="Update family name given a family id",
