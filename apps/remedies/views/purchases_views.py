@@ -48,6 +48,12 @@ CharField.register_lookup(Lower)
                 description="List of comma separated family ids.<br><br>"
                 "Filter only purchases for the given families, if not provided, filter by all families",
             ),
+            OpenApiParameter(
+                "medicine_name",
+                type=str,
+                description="Medicine name to search by<br/><br/>"
+                "Filter all purchases by searched medicine name",
+            ),
         ],
         tags=["Purchases"],
     ),

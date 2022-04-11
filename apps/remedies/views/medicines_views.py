@@ -2,7 +2,7 @@ from functools import reduce
 
 from django.db.models import CharField, Q
 from django.db.models.functions import Lower
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
 from apps.remedies.models import Medicine
@@ -19,6 +19,20 @@ CharField.register_lookup(Lower)
     list=extend_schema(
         summary="List all medicines",
         description="List all medicines in the database",
+        parameters=[
+            OpenApiParameter(
+                "name",
+                type=str,
+                description="Medicine name to search by<br/><br/>"
+                "Filter by medicine name given a search term",
+            ),
+            OpenApiParameter(
+                "maker",
+                type=str,
+                description="Medicine maker to search by<br/><br/>"
+                "Filter by medicine maker given a search term",
+            ),
+        ],
         tags=["Medicines"],
     ),
     create=extend_schema(
