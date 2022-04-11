@@ -156,6 +156,41 @@ class ListPurchaseViewSetTests(CustomTestCase):
             response.json(),
         )
 
+    def test_list_filtering_by_medicine_name(self):
+        med_1 = MedicineFactory(name="Paracetamol", maker="Laboratorio Chile")
+        purchase_1 = PurchaseFactory(user=self.user, medicine=med_1, family=self.family)
+        med_2 = MedicineFactory(name="Azitromicina", maker="Delta")
+        purchase_2 = PurchaseFactory(user=self.user, medicine=med_2, family=self.family)
+
+        response = self.backend.get(
+            self.url, data={"medicine_name": "ol"}, status=status.HTTP_200_OK
+        )
+        ValidateMultiple.validate(
+            self, ValidatePurchase.validate, [purchase_1], response.json()
+        )
+
+        response = self.backend.get(
+            self.url,
+            data={
+                "medicine_name": "para",
+            },
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self, ValidatePurchase.validate, [purchase_1], response.json()
+        )
+
+        response = self.backend.get(
+            self.url,
+            data={
+                "medicine_name": "azitrom",
+            },
+            status=status.HTTP_200_OK,
+        )
+        ValidateMultiple.validate(
+            self, ValidatePurchase.validate, [purchase_2], response.json()
+        )
+
 
 class UpdatePurchaseViewSetTests(CustomTestCase):
     @classmethod

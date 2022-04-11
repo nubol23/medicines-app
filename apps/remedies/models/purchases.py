@@ -26,3 +26,6 @@ class Purchase(BaseModel):
     buy_date = models.DateTimeField()
     expiration_date = models.DateTimeField()
     units = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Purchase: {self.medicine.name} for {self.family.family_name}"
