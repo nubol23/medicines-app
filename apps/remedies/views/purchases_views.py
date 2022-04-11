@@ -1,4 +1,8 @@
+from functools import reduce
+
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import CharField, Q
+from django.db.models.functions import Lower
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
@@ -15,6 +19,8 @@ from apps.remedies.serializers import (
     PurchaseUpdateSerializer,
 )
 from utils.views import CustomModelViewSet
+
+CharField.register_lookup(Lower)
 
 
 @extend_schema_view(
@@ -106,5 +112,14 @@ class PurchasesViewSet(CustomModelViewSet):
         if family_ids and isinstance(family_ids, str):
             family_ids = family_ids.split(",")
             qs = qs.filter(family__in=family_ids)
+
+        # Search by medicine name
+        q_objects = []
+        name = self.request.query_params.get("medicine_name")
+        if name:
+            q_objects.append(Q(medicine__name__unaccent__lower__trigram_similar=name))
+            q_objects.append(Q(medicine__name__icontains=name))
+        if len(q_objects) > 0:
+            qs = qs.filter(reduce(lambda q_1, q_2: q_1 | q_2, q_objects))
 
         return qs
