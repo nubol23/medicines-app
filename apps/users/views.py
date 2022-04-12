@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, inline_serializer
@@ -66,6 +68,12 @@ class ActivateUserView(APIView):
     )
     def post(self, request, format=None, **kwargs):
         user_id = self.request.data.get("user_id", None)
+
+        try:
+            UUID(user_id)
+        except ValueError:
+            raise UnprocessableEntityError("invalid user")
+
         if user_id:
             user = get_object_or_404(User, id=user_id)
             with transaction.atomic():
