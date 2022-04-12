@@ -1,10 +1,14 @@
 import uuid
+from datetime import timedelta
 
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import CIEmailField
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from utils.models import BaseModel
 
 
 class UserManager(BaseUserManager):
@@ -77,3 +81,20 @@ class User(PermissionsMixin, AbstractBaseUser):
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+
+class PasswordRestoreRequest(BaseModel):
+    expiration_minutes = 60  # 1 hour
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = CIEmailField(max_length=255, unique=True)
+
+    expiration_date = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.expiration_date and self.expiration_minutes:
+            self.expiration_date = timezone.now() + timedelta(
+                minutes=self.expiration_minutes
+            )
+
+        return super().save(*args, **kwargs)
