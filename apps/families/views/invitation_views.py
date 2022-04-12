@@ -118,6 +118,7 @@ class FamilyInvitationViewSet(CustomModelViewSet):
                 username=self.request.data["email"],
                 password=random_password,
                 to_email=self.request.data["email"],
+                user_id=new_user.id,
             )
 
             return Response(

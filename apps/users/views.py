@@ -119,6 +119,8 @@ class UserViewSet(CustomModelViewSet):
 
         email = response.data["email"]
         first_name = response.data["first_name"]
-        send_activate_user_email(first_name=first_name, to_email=email)
+        send_activate_user_email(
+            first_name=first_name, to_email=email, user_id=response.data["id"]
+        )
 
         return response

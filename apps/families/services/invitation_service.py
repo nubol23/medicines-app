@@ -9,6 +9,7 @@ def send_family_invitation_email(
     username,
     password,
     to_email,
+    user_id,
     redirect_to=settings.EMAIL_REDIRECT_TO_URL,
 ):
     context = {
@@ -17,7 +18,7 @@ def send_family_invitation_email(
         "family_name": family_name,
         "username": username,
         "password": password,
-        "redirect_to": redirect_to,
+        "redirect_to": f"{redirect_to}/{user_id}",
     }
     send_email(
         subject=f"{inviter} te invitó a unirse a su familia en MedicinesApp",
