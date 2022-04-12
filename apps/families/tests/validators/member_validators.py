@@ -11,8 +11,9 @@ class ValidateMember(BaseValidator):
             if invitation and invitation.status == InvitationStatus.PENDING:
                 return "pending"
             else:
-                return ""
+                return "active"
 
+        testcase.assertEqual(str(obj.user.id), dict_entry.pop("user_id"))
         testcase.assertEqual(_get_status(obj), dict_entry.pop("status"))
         testcase.assertEqual(obj.user.first_name, dict_entry.pop("first_name"))
         testcase.assertEqual(obj.user.last_name, dict_entry.pop("last_name"))

@@ -6,6 +6,7 @@ from apps.users.serializers import UserSerializer
 
 
 class FamilyMemberSerializer(ModelSerializer):
+    user_id = serializers.UUIDField(source="user.id")
     first_name = serializers.CharField(source="user.first_name")
     last_name = serializers.CharField(source="user.last_name")
     phone_number = serializers.CharField(source="user.phone_number")
@@ -14,7 +15,14 @@ class FamilyMemberSerializer(ModelSerializer):
 
     class Meta:
         model = Membership
-        fields = ("first_name", "last_name", "phone_number", "email", "status")
+        fields = (
+            "user_id",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "status",
+        )
 
     def get_status(self, instance):
         email = instance.user.email
@@ -22,7 +30,7 @@ class FamilyMemberSerializer(ModelSerializer):
         if invitation and invitation.status == InvitationStatus.PENDING:
             return "pending"
         else:
-            return ""
+            return "active"
 
 
 class FamilySerializer(ModelSerializer):
