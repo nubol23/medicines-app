@@ -2,7 +2,7 @@ from uuid import UUID
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -94,6 +94,14 @@ class ActivateUserView(APIView):
             raise UnprocessableEntityError("invalid user")
 
 
+@extend_schema_view(
+    create=extend_schema(
+        summary="Register user",
+        description="Create user through registration flow.",
+        responses=UserSerializer,
+        tags=["Users"],
+    )
+)
 class UserViewSet(CustomModelViewSet):
     queryset = User.objects.all()
     create_serializer_class = UserCreateSerializer
