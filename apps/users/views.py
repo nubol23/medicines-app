@@ -12,9 +12,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.families.models import FamilyInvitation, InvitationStatus
 from apps.users import serializers
-from apps.users.models import User
-from apps.users.serializers import UserCreateSerializer, UserSerializer
+from apps.users.models import PasswordRestoreRequest, User
+from apps.users.serializers import (
+    PasswordRestoreRequestSerializer,
+    UserCreateSerializer,
+    UserSerializer,
+)
 from apps.users.services.activate_service import send_activate_user_email
+from apps.users.services.restore_password_service import send_restore_password_email
 from utils.errors import UnprocessableEntityError
 from utils.views import CustomModelViewSet
 
@@ -121,6 +126,26 @@ class UserViewSet(CustomModelViewSet):
         first_name = response.data["first_name"]
         send_activate_user_email(
             first_name=first_name, to_email=email, user_id=response.data["id"]
+        )
+
+        return response
+
+
+class PasswordRestoreRequestViewSet(CustomModelViewSet):
+    queryset = PasswordRestoreRequest.objects.all()
+    serializer_class = PasswordRestoreRequestSerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        email = self.request.data.get("email")
+        user = get_object_or_404(User, email=email)
+
+        response = super().create(request, *args, **kwargs)
+
+        send_restore_password_email(
+            first_name=user.first_name,
+            to_email=user.email,
+            restore_request_id=response.data["id"],
         )
 
         return response
