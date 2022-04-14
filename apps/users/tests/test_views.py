@@ -141,7 +141,9 @@ class CreatePasswordRestoreRequestViewSetTests(CustomTestCase):
         mock_send_email.assert_not_called()
 
         self.backend.post(
-            self.url, data={"email": "patito@email.com"}, status=status.HTTP_404_NOT_FOUND
+            self.url,
+            data={"email": "patito@email.com"},
+            status=status.HTTP_404_NOT_FOUND,
         )
 
         mock_send_email.assert_not_called()

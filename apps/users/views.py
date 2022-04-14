@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, inline_seri
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.serializers import CharField, UUIDField
+from rest_framework.serializers import CharField, EmailField, UUIDField
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -131,6 +131,16 @@ class UserViewSet(CustomModelViewSet):
         return response
 
 
+@extend_schema_view(
+    create=extend_schema(
+        summary="Create Password Restore Request",
+        description="Create a passoword restore request and send a password recovery email.",
+        request=inline_serializer(
+            "PasswordRestoreRequestCreateSerializer", fields={"email": EmailField()}
+        ),
+        tags=["Users"],
+    )
+)
 class PasswordRestoreRequestViewSet(CustomModelViewSet):
     queryset = PasswordRestoreRequest.objects.all()
     serializer_class = PasswordRestoreRequestSerializer
