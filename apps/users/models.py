@@ -91,6 +91,10 @@ class PasswordRestoreRequest(BaseModel):
 
     expiration_date = models.DateTimeField(null=True, blank=True)
 
+    @property
+    def is_expired(self):
+        return self.expiration_date < timezone.now()
+
     def save(self, *args, **kwargs):
         if not self.expiration_date and self.expiration_minutes:
             self.expiration_date = timezone.now() + timedelta(
