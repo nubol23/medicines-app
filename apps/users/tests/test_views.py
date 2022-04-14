@@ -136,6 +136,16 @@ class CreatePasswordRestoreRequestViewSetTests(CustomTestCase):
         self.assertEqual(response.json()["email"], self.user.email)
         mock_send_email.assert_called_once()
 
+    @patch("utils.functions.send_mail")
+    def test_create_password_restore_request_invalid_user_fail(self, mock_send_email):
+        mock_send_email.assert_not_called()
+
+        self.backend.post(
+            self.url, data={"email": "patito@email.com"}, status=status.HTTP_404_NOT_FOUND
+        )
+
+        mock_send_email.assert_not_called()
+
     # from django.test import override_settings
     #
     # @override_settings(EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend")
