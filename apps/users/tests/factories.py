@@ -2,7 +2,7 @@ from datetime import timezone
 
 import factory.django
 
-from apps.users.models import User
+from apps.users.models import PasswordRestoreRequest, User
 from utils.tests.faker import faker
 
 
@@ -23,3 +23,10 @@ class UserFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def email(self):
         return f"{self.first_name.lower()}.{self.last_name.lower()}@example.com"
+
+
+class PasswordRestoreRequestFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = PasswordRestoreRequest
+
+    email = factory.LazyFunction(faker.email())

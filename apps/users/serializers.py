@@ -1,7 +1,8 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.fields import CharField
+from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from apps.users.models import User
+from apps.users.models import PasswordRestoreRequest, User
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -43,3 +44,22 @@ class UserCreateSerializer(ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+
+class PasswordRestoreRequestSerializer(ModelSerializer):
+    class Meta:
+        model = PasswordRestoreRequest
+        read_only_fields = (
+            "id",
+            "expiration_date",
+        )
+        fields = (
+            "id",
+            "email",
+            "expiration_date",
+        )
+
+
+class PasswordRestoreSerializer(Serializer):
+    # For documentation purposes
+    password = CharField()

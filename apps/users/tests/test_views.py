@@ -1,10 +1,12 @@
+import datetime
 from unittest.mock import patch
 
 from django.urls import reverse
+from freezegun import freeze_time
 from rest_framework import status
 
-from apps.users.models import User
-from apps.users.tests.factories import UserFactory
+from apps.users.models import PasswordRestoreRequest, User
+from apps.users.tests.factories import PasswordRestoreRequestFactory, UserFactory
 from apps.users.tests.validators import ValidateUser
 from utils.tests.faker import faker
 from utils.tests.testcase import CustomTestCase
@@ -113,3 +115,100 @@ class CreateUserViewSetTests(CustomTestCase):
     #     self.backend.post(
     #         self.url, data=data, status=status.HTTP_201_CREATED
     #     )
+
+
+class CreatePasswordRestoreRequestViewSetTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.url = reverse("users:restore-password")
+
+        cls.data = {"email": cls.user.email}
+
+    @patch("utils.functions.send_mail")
+    def test_create_password_restore_request(self, mock_send_email):
+        mock_send_email.assert_not_called()
+        count = PasswordRestoreRequest.objects.count()
+
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_201_CREATED
+        )
+
+        self.assertEqual(PasswordRestoreRequest.objects.count(), count + 1)
+        self.assertEqual(response.json()["email"], self.user.email)
+        mock_send_email.assert_called_once()
+
+    @patch("utils.functions.send_mail")
+    def test_create_password_restore_request_invalid_user_fail(self, mock_send_email):
+        mock_send_email.assert_not_called()
+
+        self.backend.post(
+            self.url,
+            data={"email": "patito@email.com"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+        mock_send_email.assert_not_called()
+
+    # from django.test import override_settings
+    #
+    # @override_settings(EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend")
+    # def test_send_restore_password_to_me(self):
+    #     import config.settings.default as settings
+    #
+    #     User.objects.create_user(
+    #         email=settings.PERSONAL_TEST_EMAIL,
+    #         first_name=settings.PERSONAL_TEST_FIRST_NAME,
+    #         last_name=settings.PERSONAL_TEST_LAST_NAME,
+    #         phone_number=settings.PERSONAL_TEST_PHONE
+    #     )
+    #
+    #     data = {"email": settings.PERSONAL_TEST_EMAIL}
+    #
+    #     self.backend.post(
+    #         self.url, data=data, status=status.HTTP_201_CREATED
+    #     )
+
+
+class PasswordRestoreRequestViewSetUpdatePasswordTests(CustomTestCase):
+    FREEZE_TIME = "2022-01-02T00:00:00Z"
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.password_request = PasswordRestoreRequestFactory(email=cls.user.email)
+
+        cls.url = reverse(
+            "users:restore-password-detail",
+            kwargs={"request_id": cls.password_request.id},
+        )
+
+        cls.data = {"password": "new_password"}
+
+    def test_update_password_by_request_success(self):
+        old_password_hash = self.user.password
+
+        self.backend.post(self.url, data=self.data, status=status.HTTP_200_OK)
+
+        self.user.refresh_from_db()
+        self.password_request.refresh_from_db()
+        self.assertNotEqual(old_password_hash, self.user.password)
+        self.assertTrue(self.password_request.is_expired)
+
+    @freeze_time(FREEZE_TIME)
+    def test_update_password_by_request_expired_fail(self):
+        self.password_request.expiration_date = datetime.datetime(
+            2022, 1, 1, tzinfo=datetime.timezone.utc
+        )
+        self.password_request.save()
+
+        old_password_hash = self.user.password
+
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_400_BAD_REQUEST
+        )
+
+        self.assertEqual(response.json()["error"], "Expired request")
+
+        self.user.refresh_from_db()
+        self.assertEqual(old_password_hash, self.user.password)

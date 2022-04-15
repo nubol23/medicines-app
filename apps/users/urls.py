@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 from apps.users.views import (
     ActivateUserView,
     CustomTokenObtainPairView,
+    PasswordRestoreRequestViewSet,
     UserExistsViewSet,
     UserViewSet,
 )
@@ -18,4 +19,14 @@ urlpatterns = [
     path("<user_email>/exists/", UserExistsViewSet.as_view(), name="user-exists"),
     path("activate", ActivateUserView.as_view(), name="activate-user"),
     path("register", UserViewSet.as_view({"post": "create"}), name="register-user"),
+    path(
+        "restoration",
+        PasswordRestoreRequestViewSet.as_view({"post": "create"}),
+        name="restore-password",
+    ),
+    path(
+        "restoration/<request_id>",
+        PasswordRestoreRequestViewSet.as_view({"post": "update_password_with_invite"}),
+        name="restore-password-detail",
+    ),
 ]
