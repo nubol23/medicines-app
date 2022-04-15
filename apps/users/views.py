@@ -202,6 +202,7 @@ class PasswordRestoreRequestViewSet(CustomModelViewSet):
         with transaction.atomic():
             user = get_object_or_404(User, email=req.email)
             user.set_password(validated_data["password"])
+            user.save()
 
             req.mark_expired()
 

@@ -24,4 +24,9 @@ urlpatterns = [
         PasswordRestoreRequestViewSet.as_view({"post": "create"}),
         name="restore-password",
     ),
+    path(
+        "restoration/<request_id>",
+        PasswordRestoreRequestViewSet.as_view({"post": "update_password_with_invite"}),
+        name="restore-password-detail",
+    ),
 ]
