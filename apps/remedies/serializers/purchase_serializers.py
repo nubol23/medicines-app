@@ -23,7 +23,12 @@ class PurchaseCreateSerializer(serializers.ModelSerializer):
 class PurchaseUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Purchase
-        fields = ("buy_date", "expiration_date", "units")
+        fields = (
+            "buy_date",
+            "expiration_date",
+            "units",
+            "consumed",
+        )
 
 
 class PurchaseRetrieveSerializer(serializers.ModelSerializer):
@@ -41,4 +46,5 @@ class PurchaseRetrieveSerializer(serializers.ModelSerializer):
             "buy_date",
             "expiration_date",
             "units",
+            "consumed",
         )
