@@ -2,8 +2,14 @@ from uuid import UUID
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from drf_spectacular.utils import (
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+    inline_serializer,
+)
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import CharField, EmailField, UUIDField
@@ -15,12 +21,13 @@ from apps.users import serializers
 from apps.users.models import PasswordRestoreRequest, User
 from apps.users.serializers import (
     PasswordRestoreRequestSerializer,
+    PasswordRestoreSerializer,
     UserCreateSerializer,
     UserSerializer,
 )
 from apps.users.services.activate_service import send_activate_user_email
 from apps.users.services.restore_password_service import send_restore_password_email
-from utils.errors import UnprocessableEntityError
+from utils.errors import BadRequestError, UnprocessableEntityError
 from utils.views import CustomModelViewSet
 
 
@@ -139,12 +146,33 @@ class UserViewSet(CustomModelViewSet):
             "PasswordRestoreRequestCreateSerializer", fields={"email": EmailField()}
         ),
         tags=["Users"],
-    )
+    ),
+    update_password_with_invite=extend_schema(
+        summary="Restore password given a valid restore request id",
+        description="Restore password if a not expired password restore request exists",
+        request=PasswordRestoreSerializer,
+        responses={
+            status.HTTP_200_OK: inline_serializer(
+                "PasswordRestoredResponseSerializer",
+                fields={"message": CharField(default="Restored password successfully")},
+            ),
+            status.HTTP_400_BAD_REQUEST: inline_serializer(
+                "PasswordRestoredErrorResponseSerializer",
+                fields={"error": CharField(default="Expired request")},
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                description="Invalid request or user"
+            ),
+        },
+        tags=["Users"],
+    ),
 )
 class PasswordRestoreRequestViewSet(CustomModelViewSet):
     queryset = PasswordRestoreRequest.objects.all()
     serializer_class = PasswordRestoreRequestSerializer
     permission_classes = [AllowAny]
+    lookup_field = "id"
+    lookup_url_kwarg = "request_id"
 
     def create(self, request, *args, **kwargs):
         email = self.request.data.get("email")
@@ -159,3 +187,24 @@ class PasswordRestoreRequestViewSet(CustomModelViewSet):
         )
 
         return response
+
+    @action(detail=True, methods=["post"])
+    def update_password_with_invite(self, request, *args, **kwargs):
+        serializer = PasswordRestoreSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        req = self.get_object()
+
+        if req.is_expired:
+            raise BadRequestError("Expired request")
+
+        with transaction.atomic():
+            user = get_object_or_404(User, email=req.email)
+            user.set_password(validated_data["password"])
+
+            req.mark_expired()
+
+        return Response(
+            {"message": "Restored password successfully"}, status=status.HTTP_200_OK
+        )

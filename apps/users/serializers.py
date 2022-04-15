@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.fields import CharField
+from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from apps.users.models import PasswordRestoreRequest, User
@@ -57,3 +58,8 @@ class PasswordRestoreRequestSerializer(ModelSerializer):
             "email",
             "expiration_date",
         )
+
+
+class PasswordRestoreSerializer(Serializer):
+    # For documentation purposes
+    password = CharField()
