@@ -24,3 +24,4 @@ class ValidatePurchase(BaseValidator):
             testcase, purchase_obj.expiration_date, purchase_dict.pop("expiration_date")
         )
         testcase.assertEqual(purchase_obj.units, purchase_dict.pop("units"))
+        testcase.assertEqual(purchase_obj.consumed, purchase_dict.pop("consumed"))

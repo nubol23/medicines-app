@@ -255,6 +255,18 @@ class UpdatePurchaseViewSetTests(CustomTestCase):
         self.purchase.refresh_from_db()
         ValidatePurchase.validate(self, self.purchase, response.json())
 
+    def test_update_consumed_purchase(self):
+        self.data["consumed"] = True
+        self.assertFalse(self.purchase.consumed)
+
+        response = self.backend.patch(
+            self.url, data=self.data, status=status.HTTP_200_OK
+        )
+
+        self.purchase.refresh_from_db()
+        self.assertTrue(self.purchase.consumed)
+        ValidatePurchase.validate(self, self.purchase, response.json())
+
 
 class RetrievePurchaseViewSetTests(CustomTestCase):
     @classmethod
