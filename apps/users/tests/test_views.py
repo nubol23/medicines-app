@@ -195,6 +195,13 @@ class PasswordRestoreRequestViewSetUpdatePasswordTests(CustomTestCase):
         self.assertNotEqual(old_password_hash, self.user.password)
         self.assertTrue(self.password_request.is_expired)
 
+        # Fail login with old password
+        with self.assertRaisesMessage(KeyError, "access"):
+            self.backend.login(self.user)
+
+        # Login with new password
+        self.backend.login(self.user, password="new_password")
+
     @freeze_time(FREEZE_TIME)
     def test_update_password_by_request_expired_fail(self):
         self.password_request.expiration_date = datetime.datetime(
