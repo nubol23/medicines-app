@@ -2,11 +2,8 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from apps.users.views import (
-    ActivateUserView,
     CustomTokenObtainPairView,
-    PasswordRestoreRequestViewSet,
-    UserExistsViewSet,
-    UserViewSet,
+    PasswordRestoreRequestViewSet, UserExistsViewSet, ActivateUserView, UserViewSet,
 )
 
 app_name = "users"
@@ -19,12 +16,6 @@ urlpatterns = [
     path("<user_email>/exists/", UserExistsViewSet.as_view(), name="user-exists"),
     path("activate", ActivateUserView.as_view(), name="activate-user"),
     path("register", UserViewSet.as_view({"post": "create"}), name="register-user"),
-    path("<user_id>", UserViewSet.as_view({"get": "retrieve"}), name="retrieve-user"),
-    path(
-        "update/<user_id>",
-        UserViewSet.as_view({"patch": "partial_update"}),
-        name="update-user",
-    ),
     path(
         "restoration",
         PasswordRestoreRequestViewSet.as_view({"post": "create"}),
@@ -35,4 +26,10 @@ urlpatterns = [
         PasswordRestoreRequestViewSet.as_view({"post": "update_password_with_invite"}),
         name="restore-password-detail",
     ),
+    path(
+        "update/<user_id>",
+        UserViewSet.as_view({"patch": "partial_update"}),
+        name="update-user",
+    ),
+    path("<user_id>", UserViewSet.as_view({"get": "retrieve"}), name="retrieve-user"),
 ]
