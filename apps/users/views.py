@@ -112,7 +112,19 @@ class ActivateUserView(APIView):
         description="Create user through registration flow.",
         responses=UserSerializer,
         tags=["Users"],
-    )
+    ),
+    partial_update=extend_schema(
+        summary="Update user",
+        description="Update user data and password if sent.",
+        responses=UserSerializer,
+        tags=["Users"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve user",
+        description="Retrieve user data without password.",
+        responses=UserSerializer,
+        tags=["Users"],
+    ),
 )
 class UserViewSet(CustomModelViewSet):
     queryset = User.objects.all()

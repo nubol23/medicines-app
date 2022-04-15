@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.users.models import User, PasswordRestoreRequest
+from apps.users.models import PasswordRestoreRequest, User
 
 admin.site.register(User)
 admin.site.register(PasswordRestoreRequest)
