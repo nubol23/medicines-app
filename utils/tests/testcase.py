@@ -25,7 +25,7 @@ class CustomAPIClient(APIClient):
         if status:
             assert (
                 response.status_code == status
-            ), f"returned {response.status_code} instead"
+            ), f"returned {response.status_code} instead with response {response.data}"
 
     def get(self, path, data=None, follow=False, **extra):
         response = super().get(path, data, follow, **extra)
