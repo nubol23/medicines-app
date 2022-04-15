@@ -20,6 +20,11 @@ urlpatterns = [
     path("activate", ActivateUserView.as_view(), name="activate-user"),
     path("register", UserViewSet.as_view({"post": "create"}), name="register-user"),
     path(
+        "update/<user_id>",
+        UserViewSet.as_view({"patch": "partial_update"}),
+        name="update-user",
+    ),
+    path(
         "restoration",
         PasswordRestoreRequestViewSet.as_view({"post": "create"}),
         name="restore-password",
