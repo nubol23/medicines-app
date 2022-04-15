@@ -19,6 +19,7 @@ urlpatterns = [
     path("<user_email>/exists/", UserExistsViewSet.as_view(), name="user-exists"),
     path("activate", ActivateUserView.as_view(), name="activate-user"),
     path("register", UserViewSet.as_view({"post": "create"}), name="register-user"),
+    path("<user_id>", UserViewSet.as_view({"get": "retrieve"}), name="retrieve-user"),
     path(
         "update/<user_id>",
         UserViewSet.as_view({"patch": "partial_update"}),
