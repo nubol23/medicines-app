@@ -87,7 +87,7 @@ class PasswordRestoreRequest(BaseModel):
     expiration_minutes = 60  # 1 hour
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = CIEmailField(max_length=255, unique=True)
+    email = CIEmailField(max_length=255)
 
     expiration_date = models.DateTimeField(null=True, blank=True)
 
