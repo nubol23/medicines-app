@@ -2,8 +2,11 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from apps.users.views import (
+    ActivateUserView,
     CustomTokenObtainPairView,
-    PasswordRestoreRequestViewSet, UserExistsViewSet, ActivateUserView, UserViewSet,
+    PasswordRestoreRequestViewSet,
+    UserExistsViewSet,
+    UserViewSet,
 )
 
 app_name = "users"
