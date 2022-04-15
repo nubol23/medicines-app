@@ -95,6 +95,10 @@ class PasswordRestoreRequest(BaseModel):
     def is_expired(self):
         return self.expiration_date < timezone.now()
 
+    def mark_expired(self):
+        self.expiration_date = self.expiration_date - timedelta(self.expiration_minutes)
+        self.save()
+
     def save(self, *args, **kwargs):
         if not self.expiration_date and self.expiration_minutes:
             self.expiration_date = timezone.now() + timedelta(
