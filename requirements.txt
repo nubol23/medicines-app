@@ -34,3 +34,4 @@ six==1.16.0
 sqlparse==0.4.2
 tomli==2.0.1
 django_cors_headers==3.11.0
+freezegun==1.2.1

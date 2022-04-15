@@ -1,10 +1,12 @@
+import datetime
 from unittest.mock import patch
 
 from django.urls import reverse
+from freezegun import freeze_time
 from rest_framework import status
 
 from apps.users.models import PasswordRestoreRequest, User
-from apps.users.tests.factories import UserFactory
+from apps.users.tests.factories import PasswordRestoreRequestFactory, UserFactory
 from apps.users.tests.validators import ValidateUser
 from utils.tests.faker import faker
 from utils.tests.testcase import CustomTestCase
@@ -166,3 +168,47 @@ class CreatePasswordRestoreRequestViewSetTests(CustomTestCase):
     #     self.backend.post(
     #         self.url, data=data, status=status.HTTP_201_CREATED
     #     )
+
+
+class PasswordRestoreRequestViewSetUpdatePasswordTests(CustomTestCase):
+    FREEZE_TIME = "2022-01-02T00:00:00Z"
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.password_request = PasswordRestoreRequestFactory(email=cls.user.email)
+
+        cls.url = reverse(
+            "users:restore-password-detail",
+            kwargs={"request_id": cls.password_request.id},
+        )
+
+        cls.data = {"password": "new_password"}
+
+    def test_update_password_by_request_success(self):
+        old_password_hash = self.user.password
+
+        self.backend.post(self.url, data=self.data, status=status.HTTP_200_OK)
+
+        self.user.refresh_from_db()
+        self.password_request.refresh_from_db()
+        self.assertNotEqual(old_password_hash, self.user.password)
+        self.assertTrue(self.password_request.is_expired)
+
+    @freeze_time(FREEZE_TIME)
+    def test_update_password_by_request_expired_fail(self):
+        self.password_request.expiration_date = datetime.datetime(
+            2022, 1, 1, tzinfo=datetime.timezone.utc
+        )
+        self.password_request.save()
+
+        old_password_hash = self.user.password
+
+        response = self.backend.post(
+            self.url, data=self.data, status=status.HTTP_400_BAD_REQUEST
+        )
+
+        self.assertEqual(response.json()["error"], "Expired request")
+
+        self.user.refresh_from_db()
+        self.assertEqual(old_password_hash, self.user.password)
