@@ -119,9 +119,11 @@ class UserViewSet(CustomModelViewSet):
     create_serializer_class = UserCreateSerializer
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+    lookup_field = "id"
+    lookup_url_kwarg = "user_id"
 
     def get_serializer_class(self):
-        if self.action == "create":
+        if self.action in ["create", "partial_update"]:
             return self.create_serializer_class
 
         return self.serializer_class

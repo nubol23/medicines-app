@@ -117,6 +117,48 @@ class CreateUserViewSetTests(CustomTestCase):
     #     )
 
 
+class UserViewSetUpdateTests(CustomTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+        cls.url = reverse("users:update-user", kwargs={"user_id": cls.user.id})
+
+        cls.data = {
+            "first_name": "New name",
+            "last_name": "New last name",
+            "email": "new.email@test.com",
+            "phone_number": "1234567",
+        }
+
+    def setUp(self):
+        self.backend.login(self.user)
+
+    def test_update_user_data(self):
+        response = self.backend.patch(
+            self.url, data=self.data, status=status.HTTP_200_OK
+        )
+
+        self.user.refresh_from_db()
+        ValidateUser.validate(self, self.user, response.json())
+
+    def test_update_user_data_with_password(self):
+        self.data["password"] = "new_password"
+
+        response = self.backend.patch(
+            self.url, data=self.data, status=status.HTTP_200_OK
+        )
+
+        self.user.refresh_from_db()
+        ValidateUser.validate(self, self.user, response.json())
+
+        # Fail login with old password
+        with self.assertRaisesMessage(KeyError, "access"):
+            self.backend.login(self.user)
+        # Login with new password
+        self.backend.login(self.user, password="new_password")
+
+
 class CreatePasswordRestoreRequestViewSetTests(CustomTestCase):
     @classmethod
     def setUpTestData(cls):
@@ -194,6 +236,13 @@ class PasswordRestoreRequestViewSetUpdatePasswordTests(CustomTestCase):
         self.password_request.refresh_from_db()
         self.assertNotEqual(old_password_hash, self.user.password)
         self.assertTrue(self.password_request.is_expired)
+
+        # Fail login with old password
+        with self.assertRaisesMessage(KeyError, "access"):
+            self.backend.login(self.user)
+
+        # Login with new password
+        self.backend.login(self.user, password="new_password")
 
     @freeze_time(FREEZE_TIME)
     def test_update_password_by_request_expired_fail(self):
