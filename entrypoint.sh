@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Collecting staticfiles"
+./manage.py collectstatic --noinput
+
 echo "Applying migrations"
 ./manage.py migrate
 
