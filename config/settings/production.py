@@ -5,6 +5,7 @@ from .default import *  # noqa: E402, F403, F401
 DEBUG = False
 ALLOWED_HOSTS += ["medicines-backend.herokuapp.com"]  # noqa: F405
 CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = ["https://medicines-backend.herokuapp.com"]
 
 LOGGING = {
     "version": 1,
