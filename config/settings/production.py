@@ -2,6 +2,10 @@ import dj_database_url
 
 from .default import *  # noqa: E402, F403, F401
 
+DEBUG = False
+ALLOWED_HOSTS += ["medicines-backend.herokuapp.com"]  # noqa: F405
+CORS_ORIGIN_ALLOW_ALL = True
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
