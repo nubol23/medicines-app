@@ -16,6 +16,4 @@ RUN pip install --no-cache-dir -r /src/requirements.txt
 
 COPY . /src
 
-EXPOSE 8000
-
 ENTRYPOINT ["sh", "./entrypoint.sh"]
