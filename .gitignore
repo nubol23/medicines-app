@@ -12,6 +12,7 @@ db.sqlite3-journal
 
 .env
 .venv
+.build_intructions
 env/
 venv/
 ENV/
