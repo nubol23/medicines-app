@@ -7,6 +7,8 @@ ALLOWED_HOSTS += ["medicines-backend.herokuapp.com"]  # noqa: F405
 CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = ["https://medicines-backend.herokuapp.com"]
 
+STATIC_ROOT = BASE_DIR / "staticfiles"  # noqa F405
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
