@@ -119,7 +119,7 @@ class PurchasesViewSet(CustomModelViewSet):
             family_ids = family_ids.split(",")
             qs = qs.filter(family__in=family_ids)
 
-        # Search by medicine name
+        # Search by medicines name
         q_objects = []
         name = self.request.query_params.get("medicine_name")
         if name:
