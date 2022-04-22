@@ -20,8 +20,9 @@ jobs:
         env:
           HEROKU_APP_NAME: medicines-backend
           HEROKU_REGISTRY_IMAGE: registry.heroku.com/medicines-backend/web
+          HEROKU_AUTH_TOKEN: ${{ secrets.HEROKU_AUTH_TOKEN }}
         run: |
-          docker login -u _ -p ${{ secrets.HEROKU_AUTH_TOKEN }} registry.heroku.com
+          docker login -u _ -p $HEROKU_AUTH_TOKEN registry.heroku.com
           docker pull $HEROKU_REGISTRY_IMAGE || true
           docker build --cache-from $HEROKU_REGISTRY_IMAGE --tag $HEROKU_REGISTRY_IMAGE --file ./Dockerfile '.'
           docker push $HEROKU_REGISTRY_IMAGE
