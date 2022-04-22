@@ -1,0 +1,29 @@
+name: Prod deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Lint & Test
+    uses: nubol23/medicines-app/.github/workflows/pull_request.yml@master
+
+  build:
+    name: Build and Deploy Image
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build docker images
+        env:
+          HEROKU_APP_NAME: medicines-backend
+          HEROKU_REGISTRY_IMAGE: registry.heroku.com/medicines-backend/web
+        run: |
+          docker login -u _ -p ${{ secrets.HEROKU_AUTH_TOKEN }} registry.heroku.com
+          docker pull $HEROKU_REGISTRY_IMAGE || true
+          docker build --cache-from $HEROKU_REGISTRY_IMAGE --tag $HEROKU_REGISTRY_IMAGE --file ./Dockerfile '.'
+          docker push $HEROKU_REGISTRY_IMAGE
+          chmod +x ./release.sh
+          ./release.sh
