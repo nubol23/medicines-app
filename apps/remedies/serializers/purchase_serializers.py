@@ -47,4 +47,5 @@ class PurchaseRetrieveSerializer(serializers.ModelSerializer):
             "expiration_date",
             "units",
             "consumed",
+            "is_expired",
         )

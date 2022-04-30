@@ -7,6 +7,7 @@ ALLOWED_HOSTS += ["medicines-backend.herokuapp.com"]  # noqa: F405
 CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = ["https://medicines-backend.herokuapp.com"]
 
+INSTALLED_APPS += ["django.contrib.staticfiles"]  # noqa: F405
 STATIC_ROOT = BASE_DIR / "staticfiles"  # noqa F405
 
 LOGGING = {

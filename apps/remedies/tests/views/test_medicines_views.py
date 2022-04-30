@@ -120,6 +120,7 @@ class CreateMedicineViewSetTests(CustomTestCase):
 
         medicine = Medicine.objects.latest("created_on")
         ValidateMedicine.validate(self, medicine, response.json())
+        self.assertEqual(medicine.created_by, self.user)
 
 
 class UpdateMedicineViewSetTests(CustomTestCase):
