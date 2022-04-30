@@ -37,6 +37,12 @@ CharField.register_lookup(Lower)
         "filter by comma separated list of family_ids or list only by current user's purchases.",
         parameters=[
             OpenApiParameter(
+                "filter_by_not_consumed",
+                type=bool,
+                description="Filter only purchases that are not finished yet",
+                default=False,
+            ),
+            OpenApiParameter(
                 "filter_by_user",
                 type=bool,
                 description="Filter only purchases made by the logged in user",
@@ -109,6 +115,12 @@ class PurchasesViewSet(CustomModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(family__in=self.request.user.families.all())
+
+        filter_by_not_consumed = self.request.query_params.get(
+            "filter_by_not_consumed", False
+        )
+        if str(filter_by_not_consumed).lower() == "true":
+            qs = qs.filter(consumed=False)
 
         filter_by_user = self.request.query_params.get("filter_by_user", False)
         if str(filter_by_user).lower() == "true":
