@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils import timezone
 
 from apps.families.models import Family
 from apps.remedies.models import Medicine
@@ -30,3 +31,7 @@ class Purchase(BaseModel):
 
     def __str__(self):
         return f"Purchase: {self.medicine.name} for {self.family.family_name}"
+
+    @property
+    def is_expired(self) -> bool:
+        return self.expiration_date < timezone.now()
